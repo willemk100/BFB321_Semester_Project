@@ -1,5 +1,5 @@
 /* main.css - layout, utility and colours */
-:root{
+/* :root{
 --accent:#0077cc;
 --muted:#666;
 --bg:#f8f9fb;
@@ -26,4 +26,4 @@ body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica
 .menu-meta{display:flex; justify-content:space-between; align-items:center}
 .btn{background:var(--accent); color:white; border:none; padding:0.4rem 0.6rem; border-radius:6px; cursor:pointer}
 .site-footer{padding:1.25rem 0; text-align:center; color:var(--muted)}
-@media (max-width:520px){.site-title{font-size:1.25rem}}
+@media (max-width:520px){.site-title{font-size:1.25rem}} */
