@@ -45,3 +45,20 @@ footer {
       padding: 15px;
 }
 
+
+.crimson-bg {
+    background-color: crimson !important;
+    border-color: crimson !important;
+    color: ghostwhite !important;
+}
+
+.crimson-bg:hover {
+    background-color: #a51d3b !important; 
+    border-color: #a51d3b !important;
+}
+
+
+.text-end-custom {
+    text-align: right !important;
+    padding-right: 1rem; 
+}
