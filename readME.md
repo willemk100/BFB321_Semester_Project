@@ -6,11 +6,24 @@ This project will use **TENZ** as a **case study**, basing all system functions 
 
 ---
 
+## Wireframes 
+
+Below is the wireframes designed for the web application. They give the general design of the screens and also show the flows between them. These wireframes were used to develop the web pages in HTML and using CSS and Bootstrap libraries to format the visual front-end of the web application.
+
+![](Documentation_Images/Wireframe_LogIn.png)
+![](Documentation_Images/Wireframe_Order1.png)
+![](Documentation_Images/Wireframe_Order2.png)
+![](Documentation_Images/Wireframe_Vendor1.png)
+---
+
+
 ## SQL Database Structure
 
 Tables were generated using SQLite commands to store essential data for the general operation of the ordering system, including tracking **orders**, **vendors**, and **customers**.
 
 The structure of the database tables is illustrated in the **Entity-Relationship Diagram (ERD)** below.
+
+![An image displaying the ERD made for this website](Documentation_Images/ERD_Image.png)
 
 **
 
