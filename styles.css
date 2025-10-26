@@ -27,6 +27,21 @@ row {
   border-radius: 8px;
 }
 
+.progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: #6c757d; 
+}
+
+#orderTrackingTable th {
+            background-color: #dc3545; /* Crimson/Red theme */
+            color: white;
+            font-size: 0.9rem;
+}
+
 footer {
       padding: 15px;
-    }
+}
+
