@@ -10,11 +10,17 @@ This project will use **TENZ** as a **case study**, basing all system functions 
 
 Below is the wireframes designed for the web application. They give the general design of the screens and also show the flows between them. These wireframes were used to develop the web pages in HTML and using CSS and Bootstrap libraries to format the visual front-end of the web application.
 
-![](Documentation_Images/Wireframe_LogIn.png)
-![](Documentation_Images/Wireframe_Order1.png)
-![](Documentation_Images/Wireframe_Order2.png)
-![](Documentation_Images/Wireframe_Vendor1.png)
----
+![](Documentation_Images/WireframeA.png)
+![](Documentation_Images/WireframeB.png)
+![](Documentation_Images/WireframeC.png)
+![](Documentation_Images/WireframeD.png)
+![](Documentation_Images/WireframeE.png)
+![](Documentation_Images/WireframeF.png)
+![](Documentation_Images/WireframeG.png)
+![](Documentation_Images/WireframeH.png)
+
+
+
 
 
 ## SQL Database Structure
