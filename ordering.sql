@@ -151,7 +151,9 @@ END;
 -- 1. Insert  "user"
 INSERT INTO "user" ("user_id", "username", "password", "student_number", "name", "surname", "date_of_birth", "cell_number", "email", "user_type") VALUES
 (1, 'willemk100', 'p@ssword1', 'u04868260', 'Willem', 'Kleynhans', '2004-03-17', '0812345678', 'willem@uni.com', 'admin'),
-(2, 'jessM100', 'p@ssword2', 'u23232323', 'Jessica', 'Muller', '2000-11-20', '0729876543', 'jess@uni.com', 'user');
+(2, 'jessM100', 'p@ssword2', 'u23232323', 'Jessica', 'Muller', '2000-11-20', '0729876543', 'jess@uni.com', 'user'),
+(3, 'jmk200', 'p@ssword3', 'u01234566', 'Ayden', 'Bouwer', '2004-09-17', '081234567', 'AydenB@uni.com', 'user');
+
 
 -- 2. Insert  "vendor"
 INSERT INTO "vendor" ("vendor_id", "name", "location", "phone_number", "email", "password", "bank_name", "account_number", "branch_code") VALUES
@@ -164,7 +166,7 @@ INSERT INTO "menuItem" ("menuItem_id", "vendor_id", "catagory", "name", "price",
 (1003, 101, 'Wrap', 'Tika Chicken Roti', 52.90, 30.00),
 (1004, 101, 'Wrap', 'Hallomi & Mediteranean', 52.90, 30.00),
 (1005, 101, 'Classic Shakes', 'Lime', 32.50, 15.00),
-(1006, 101, 'Classic Shakes', 'Chocolate', 32.50, 15.00);
+(1006, 101, 'Classic Shakes', 'Chocolate', 32.50, 15.00),
 (1007, 101, 'Tramezini', 'Bacon & Avo', 59.90, 32.90),
 (1008, 101, 'Tramezini', 'Rib & Mozzerella', 63.90, 26.90),
 (1009, 101, 'Tramezini', 'Chicken, Bacon & Cheese', 59.90, 39.90),
