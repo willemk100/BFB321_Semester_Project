@@ -41,42 +41,49 @@
             
             <a href="vendor_admin.html" class="text-decoration-none fw-semibold position-absolute top-0 end-0 mt-3 me-3 text-primary">Back</a>
 
-            <h1 class="h3 text-center mb-4">Insert Your Details</h1>
+            <h1 class="h3 text-center mb-4">Edit Your Details</h1>
 
             <form action="#" method="POST">
 
                 <div class="row mb-3 align-items-center">
                     <label for="vendorName" class="col-sm-4 col-form-label text-end-custom">Vendor Name</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="vendorName" placeholder="Name" required aria-required="true">
+                        <input type="text" class="form-control" id="vendorName" placeholder="*Name" required aria-required="true">
                     </div>
                 </div>
 
                 <div class="row mb-3 align-items-center">
                     <label for="description" class="col-sm-4 col-form-label text-end-custom">Description</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="description" placeholder="Description" required aria-required="true">
+                        <input type="text" class="form-control" id="description" placeholder="*Description" required aria-required="true">
                     </div>
                 </div>
 
                 <div class="row mb-3 align-items-center">
                     <label for="location" class="col-sm-4 col-form-label text-end-custom">Location</label>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" id="location" placeholder="Address" required aria-required="true">
+                        <input type="text" class="form-control" id="location" placeholder="*Address" required aria-required="true">
                     </div>
                 </div>
 
                 <div class="row mb-3 align-items-center">
                     <label for="phoneNumber" class="col-sm-4 col-form-label text-end-custom">Phone Number</label>
                     <div class="col-sm-8">
-                        <input type="tel" class="form-control" id="phoneNumber" placeholder="Contact Number" required aria-required="true">
+                        <input type="tel" class="form-control" id="phoneNumber" placeholder="*Contact Number" required aria-required="true">
                     </div>
                 </div>
 
                 <div class="row mb-3 align-items-center">
                     <label for="email" class="col-sm-4 col-form-label text-end-custom">Email</label>
                     <div class="col-sm-8">
-                        <input type="email" class="form-control" id="email" placeholder="Email" required aria-required="true">
+                        <input type="email" class="form-control" id="email" placeholder="*Email" required aria-required="true">
+                    </div>
+                </div>
+
+                <div class="row mb-3 align-items-center">
+                    <label for="bankName" class="col-sm-4 col-form-label text-end-custom">Bank Name</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control bg-light text-muted text-center fst-italic" id="bankName" value="Bank Name" readonly>
                     </div>
                 </div>
                 
@@ -88,28 +95,14 @@
                 </div>
 
                 <div class="row mb-3 align-items-center">
-                    <label for="bankName" class="col-sm-4 col-form-label text-end-custom">Bank Name</label>
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control bg-light text-muted text-center fst-italic" id="bankName" value="Bank Name" readonly>
-                    </div>
-                </div>
-
-                <div class="row mb-3 align-items-center">
                     <label for="vendorPassword" class="col-sm-4 col-form-label text-end-custom">Set Password</label>
                     <div class="col-sm-8">
-                        <input type="password" class="form-control bg-light text-muted text-center" id="vendorPassword" placeholder="Set a Password" required aria-required="true">
-                    </div>
-                </div>
-
-                <div class="row mb-4 align-items-center">
-                    <label for="confirmPassword" class="col-sm-4 col-form-label text-end-custom">Confirm Password</label>
-                    <div class="col-sm-8">
-                        <input type="password" class="form-control bg-light text-muted text-center" id="confirmPassword" placeholder="Confirm Password" required aria-required="true">
+                        <input type="password" class="form-control bg-light text-muted text-center" id="vendorPassword" placeholder="Password" required aria-required="true">
                     </div>
                 </div>
 
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-lg crimson-bg">Add new Vendor</button>
+                    <button type="submit" class="btn btn-lg crimson-bg">Change Details</button>
                 </div>
 
             </form>
