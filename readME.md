@@ -33,14 +33,16 @@ Please start at the page: **login.html**.
 
 Below is the wireframes designed for the web application. They give the general design of the screens and also show the flows between them. These wireframes were used to develop the web pages in HTML and using CSS and Bootstrap libraries to format the visual front-end of the web application.
 
-![](Documentation_Images/WireframeA.png)
-![](Documentation_Images/WireframeB.png)
-![](Documentation_Images/WireframeC.png)
-![](Documentation_Images/WireframeD.png)
-![](Documentation_Images/WireframeE.png)
-![](Documentation_Images/WireframeF.png)
-![](Documentation_Images/WireframeG.png)
-![](Documentation_Images/WireframeH.png)
+![](Documentation_Images/BFB%20Wireframes%20A.png)
+![](Documentation_Images/BFB%20Wireframes%20B.png)
+![](Documentation_Images/BFB%20Wireframes%20C.png)
+![](Documentation_Images/BFB%20Wireframes%20D.png)
+![](Documentation_Images/BFB%20Wireframes%20E.png)
+![](Documentation_Images/BFB%20Wireframes%20F.png)
+![](Documentation_Images/BFB%20Wireframes%20G.png)
+
+
+
 
 ## SQL Database Structure
 
