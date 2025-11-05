@@ -44,7 +44,45 @@
         <!-- Start of the list of vendors -->
 
         <section class="mb-4" aria-labelledby="options-heading">
+        <h2 id="options-heading" class="mb-3">Our Vendors</h2>
+        
             {% for vendor in vendors %}
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card h-100">
+                        <div class="row g-0">
+                            
+                            <div class="col-md-5">
+                                <img src="/images/tenz-logo.png" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="Logo for {{vendor.name}}">
+                            </div>
+                            
+                            <div class="col-md-5">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ vendor.name }}</h5>
+                                    <p class="card-text">Tel | {{ vendor.phone_number }}</p>
+                                    <p class="card-text">Email | {{vendor.email}}</p>
+                                    <p class="card-text"><small class="text-muted">Location | {{ vendor.location }}</small></p>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 d-flex align-items-center justify-content-center border-start">
+                                <a href="{{ url_for('vendor_menu', vendor_id=vendor['vendor_id']) }}" class="btn btn-outline-primary w-75 p-3">
+                                    
+                                    <i class="bi bi-list-ul d-block mb-1" aria-hidden="true"></i>
+                                    View Menu
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            {% endfor %}
+
+
+
+
+           <!--  {% for vendor in vendors %}
+            
             <div class="row">
                 <div class="col-md-12 mb-3">
                     <div class="card h-100" style="width: 100%; display: flex; flex-direction: row;">
@@ -63,10 +101,10 @@
                     </div>
                 </div>
             </div>
-            {% endfor %}
+            {% endfor %} -->
 
             <!-- End of list of vendors-->
-             
+
         </section>
 
         <hr class="my-3">

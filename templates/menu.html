@@ -54,7 +54,9 @@
 
         <hr class="my-3">
         <section class="menu-grid row">
+
             {%for catagory in catagories%} <!-- catagories is a list-->
+
             <article class="menu-item col-md-6 mb-3">
                 <div class="card h-100">
                     <div class="card-body">
@@ -65,9 +67,9 @@
                         <select id="{{catagory}} options" class="form-select mb-3">
                             <option selected>Select {{catagory}} Type</option>
                             <!-- Loop for each type of catagory -->
-                             {%for item in menu_items %}
-                                {% if item.catagory == catagory %}
-                                    <option value="{{item.item_id}}">{{item.name}} - R {{item.price}}</option>
+                             {%for item in menuItems %}
+                                {% if item['catagory'] == catagory %}
+                                    <option value="{{ item['name'] }}">{{ item['name'] }} - R {{ item['price'] }}</option>
                                 {% endif %}
                              {%endfor%}
                         </select>
@@ -86,7 +88,7 @@
 
 
             <!-- End of card for each catagory-->
-             
+
             <article class="menu-item col-md-6 mb-3">
                 <div class="card h-100">
                     <div class="card-body">
