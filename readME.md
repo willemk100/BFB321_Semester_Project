@@ -84,3 +84,34 @@ A user will be able to register for the platform. The admin user, a University e
 * An **analytics suite** to base business decisions on.
 
 ---
+
+## How to run the app
+
+
+```bash
+pip install flask
+python app.py
+```
+
+
+1. First the database needs to be initialised. Type the following in the terminal: 
+
+```bash
+sqlite3 ordering.db < ordering.sql
+```
+
+2. Ensure you have flask installed. In git bash terminal, type the following: 
+
+```bash 
+pip install flask
+```
+
+3. When you have "app.py" open in the editor, type in the terminal: 
+
+```bash
+python app.py
+```
+
+Then hold ctrl and click on the link: **http://127.0.0.1:5000**
+
+Currently the app will start on the customer-main.html page

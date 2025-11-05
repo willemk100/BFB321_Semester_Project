@@ -43,25 +43,33 @@
 
     <main class="container vendor-page mt-4">
         <section class="vendor-info">
-            <h2 class="vendor-section-heading text-crimson">Tenz Express UP Menu</h2>
-            <p class="meta text-muted small">Pickup time slots available: 11:00 - 11:15, 11:30 - 11:45, 12:00 - 12:15</p>
+            <h2 class="vendor-section-heading text-crimson">{{selected_vendor.name}} <!-- Contains vendor details--> | Menu</h2>
+            <!-- <p class="meta text-muted small">Pickup time slots available: 11:00 - 11:15, 11:30 - 11:45, 12:00 - 12:15</p> -->
         </section>
 
-        <hr class="my-3">
 
+
+
+        <!-- There will be a card for each "CATAGORY" in MenuItems-->
+
+        <hr class="my-3">
         <section class="menu-grid row">
+            {%for catagory in catagories%} <!-- catagories is a list-->
             <article class="menu-item col-md-6 mb-3">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h3 class="menu-title card-title">Chicken Wrap</h3>
-                        <p class="menu-desc card-text text-muted">Grilled chicken, lettuce, tomato, mayo</p>
+                        <h3 class="menu-title card-title">{{catagory}}</h3>
+                        <!-- <p class="menu-desc card-text text-muted">Grilled chicken, lettuce, tomato, mayo</p> -->
                         
-                        <label for="wrap-options" class="form-label visually-hidden">Wrap Options</label>
-                        <select id="wrap-options" class="form-select mb-3">
-                            <option selected>Select Wrap Type</option>
-                            <option value="chicken-mayo">Chicken Mayo</option>
-                            <option value="chicken-feta">Chicken & Feta</option>
-                            <option value="veg-wrap">Vegetarian Wrap</option>
+                        <label for="{{catagory}} options" class="form-label visually-hidden">{{catagory}} Options</label>
+                        <select id="{{catagory}} options" class="form-select mb-3">
+                            <option selected>Select {{catagory}} Type</option>
+                            <!-- Loop for each type of catagory -->
+                             {%for item in menu_items %}
+                                {% if item.catagory == catagory %}
+                                    <option value="{{item.item_id}}">{{item.name}} - R {{item.price}}</option>
+                                {% endif %}
+                             {%endfor%}
                         </select>
                         
                         <div class="menu-meta d-flex justify-content-between align-items-center mt-3">
@@ -74,7 +82,11 @@
                     </div>
                 </div>
             </article>
+            {%endfor%}
 
+
+            <!-- End of card for each catagory-->
+             
             <article class="menu-item col-md-6 mb-3">
                 <div class="card h-100">
                     <div class="card-body">
