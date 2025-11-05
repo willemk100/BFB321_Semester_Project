@@ -114,4 +114,19 @@ python app.py
 
 Then hold ctrl and click on the link: **http://127.0.0.1:5000**
 
-Currently the app will start on the customer-main.html page
+The website will start at the login page
+
+### For customer
+
+username: **jmk200**  
+password: **p@ssword3**
+
+### For admin
+
+username: **willemk100**  
+password: **p@ssword1**
+
+### For vendor
+
+username: **tenzusername**  
+password: **tenzpassword**

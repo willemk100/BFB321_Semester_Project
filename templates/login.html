@@ -31,30 +31,35 @@
                                 <p class="text-muted">Login to your account</p>
                             </header>
 
-                            <form role="form" aria-labelledby="login-heading">
-                                <select class="form-select" aria-label="Default select example">
-                                    <option selected>What is your role?</option>
-                                    <option value="1">Customer</option>
-                                    <option value="2">Vendor</option>
-                                    <option value="3">Administrator</option>
-                                </select>
-                                <p class="spaced-paragraph"></p>
+
+
+
+<!-- Form for submitting login details -->
+
+
+
+                           <form action="/" method="POST">
                                 <div class="form-floating mb-3">
-                                    <input type="useremail" class="form-control" id="floatingInput" placeholder="u12345678">
-                                    <label for="floatingInput">User email</label>
+                                    <input type="text" class="form-control" id="floatingInput" name= "username" placeholder="Username">
+                                    <label for="floatingInput">Username</label>
                                 </div>
                                 <div class="form-floating">
-                                    <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                                    <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password">
                                     <label for="floatingPassword">Password</label>
                                 </div>
-                                <p class="spaced-paragraph"></p>
+                                <p class="spaced-paragraph"></p> 
+
                                 <div class="d-grid">
-                                    <a href="index.html" class="btn btn-primary btn-lg">
-                                        <i aria-hidden="true"></i>
-                                        I'm hungry, let's go!
-                                    </a>
+                                     <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                                        <!-- <i aria-hidden="true"></i> -->
+                                        I'm hungry, let's go!</button>
                                 </div>
                             </form>
+
+
+<!-- End of form                             -->
+
 
                             <hr class="my-4">
                             <div class="text-center">

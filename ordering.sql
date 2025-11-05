@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS "user" (
   "email" VARCHAR(45) NOT NULL,
   "created_at" TEXT NOT NULL DEFAULT (datetime('now')),
   "updated_at" TEXT NOT NULL DEFAULT (datetime('now')),
-  "user_type" TEXT NOT NULL CHECK("user_type" IN ('admin', 'user'))
+  "user_type" TEXT NOT NULL CHECK("user_type" IN ('admin', 'customer'))
 );
 
 -- Index on username (AK)
@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS "vendor" (
   "location" VARCHAR(90) NOT NULL,
   "phone_number" VARCHAR(10) NOT NULL,
   "email" VARCHAR(90) NOT NULL,
+  "username" VARCHAR(45) NOT NULL,
   "password" VARCHAR(45) NOT NULL,
   "bank_name" VARCHAR(45) NULL,
   "account_number" VARCHAR(45) NULL,
@@ -49,7 +50,7 @@ CREATE INDEX IF NOT EXISTS "idx_vendor_name" ON "vendor" ("name");
 CREATE TABLE IF NOT EXISTS "menuItem" (
   "menuItem_id" INTEGER PRIMARY KEY,
   "vendor_id" INT NOT NULL,
-  "catagory" VARCHAR(45) NOT NULL,
+  "category" VARCHAR(45) NOT NULL,
   "name" VARCHAR(45) NOT NULL,
   "price" NUMERIC(10,2) NOT NULL,
   "created_at" TEXT NOT NULL DEFAULT (datetime('now')),
@@ -151,16 +152,16 @@ END;
 -- 1. "user"
 INSERT INTO "user" ("user_id", "username", "password", "student_number", "name", "surname", "date_of_birth", "cell_number", "email", "user_type") VALUES
 (1, 'willemk100', 'p@ssword1', 'u04868260', 'Willem', 'Kleynhans', '2004-03-17', '0812345678', 'willem@uni.com', 'admin'),
-(2, 'jessM100', 'p@ssword2', 'u23232323', 'Jessica', 'Muller', '2000-11-20', '0729876543', 'jess@uni.com', 'user'),
-(3, 'jmk200', 'p@ssword3', 'u01234566', 'Ayden', 'Bouwer', '2004-09-17', '081234567', 'AydenB@uni.com', 'user');
+(2, 'jessM100', 'p@ssword2', 'u23232323', 'Jessica', 'Muller', '2000-11-20', '0729876543', 'jess@uni.com', 'customer'),
+(3, 'jmk200', 'p@ssword3', 'u01234566', 'Ayden', 'Bouwer', '2004-09-17', '081234567', 'AydenB@uni.com', 'customer');
 
 
 -- 2. "vendor"
-INSERT INTO "vendor" ("vendor_id", "name", "location", "phone_number", "email", "password", "bank_name", "account_number", "branch_code") VALUES
-(101, 'Tenz', 'University of Pretoria, Akanyang Building, 68 Lunnon Rd, Hatfield, Pretoria, 0028', '0662230306', 'tenz@up.com', 'tenzpassword', 'FNB', '62112233445', '250655');
+INSERT INTO "vendor" ("vendor_id", "name", "location", "phone_number", "email", "username", "password", "bank_name", "account_number", "branch_code") VALUES
+(101, 'Tenz', 'University of Pretoria, Akanyang Building, 68 Lunnon Rd, Hatfield, Pretoria, 0028', '0662230306', 'tenz@up.com', 'tenzusername', 'tenzpassword', 'FNB', '62112233445', '250655');
 
 -- 3. "menuItem"
-INSERT INTO "menuItem" ("menuItem_id", "vendor_id", "catagory", "name", "price", "cost") VALUES
+INSERT INTO "menuItem" ("menuItem_id", "vendor_id", "category", "name", "price", "cost") VALUES
 (1001, 101, 'Tramezini', 'Cheese & Tomato', 43.90, 25.00),
 (1002, 101, 'Tramezini', 'Bacon & Cheese', 51.90, 26.90),
 (1003, 101, 'Wrap', 'Tika Chicken Roti', 52.90, 30.00),

@@ -50,32 +50,32 @@
 
 
 
-        <!-- There will be a card for each "CATAGORY" in MenuItems-->
+        <!-- There will be a card for each "CATEGORY" in MenuItems-->
 
         <hr class="my-3">
         <section class="menu-grid row">
 
-            {%for catagory in catagories%} <!-- catagories is a list-->
+            {%for category in categories%} <!-- catagories is a list-->
 
             <article class="menu-item col-md-6 mb-3">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h3 class="menu-title card-title">{{catagory}}</h3>
+                        <h3 class="menu-title card-title">{{category}}</h3>
                         <!-- <p class="menu-desc card-text text-muted">Grilled chicken, lettuce, tomato, mayo</p> -->
                         
-                        <label for="{{catagory}} options" class="form-label visually-hidden">{{catagory}} Options</label>
-                        <select id="{{catagory}} options" class="form-select mb-3">
-                            <option selected>Select {{catagory}} Type</option>
-                            <!-- Loop for each type of catagory -->
-                             {%for item in menuItems %}
-                                {% if item['catagory'] == catagory %}
+                        <label for="{{category}} options" class="form-label visually-hidden">{{category}} Options</label>
+                        <select id="{{category}} options" class="form-select mb-3">
+                            <option selected>Select {{category}} Type</option>
+                            <!-- Loop for each type of  -->
+                             {%for item in menu_items %}
+                                {% if item['category'] == category %}
                                     <option value="{{ item['name'] }}">{{ item['name'] }} - R {{ item['price'] }}</option>
                                 {% endif %}
                              {%endfor%}
                         </select>
                         
                         <div class="menu-meta d-flex justify-content-between align-items-center mt-3">
-                            <span class="fw-bold">R45</span>
+                            
                             <a class="btn btn-dark">
                                 <i class="bi bi-plus-circle" aria-hidden="true" style="text-align: center;"></i>
                                 Add item to Cart
@@ -87,82 +87,9 @@
             {%endfor%}
 
 
-            <!-- End of card for each catagory-->
+            <!-- End of card for each -->
 
-            <article class="menu-item col-md-6 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h3 class="menu-title card-title">Beef Burger</h3>
-                        <p class="menu-desc card-text text-muted">Beef patty, cheese, pickles, special sauce</p>
-                        
-                        <label for="burger-options" class="form-label visually-hidden">Burger Options</label>
-                        <select id="burger-options" class="form-select mb-3">
-                            <option selected>Select Patty/Topping</option>
-                            <option value="beef-cheese">Classic Beef & Cheese</option>
-                            <option value="double-beef">Double Beef Patty</option>
-                            <option value="veg-patty">Veggie Patty</option>
-                        </select>
-                        
-                        <div class="menu-meta d-flex justify-content-between align-items-center mt-3">
-                            <span class="fw-bold">R60</span>
-                            <a class="btn btn-dark">
-                                <i class="bi bi-plus-circle" aria-hidden="true" style="text-align: center;"></i>
-                                Add item to Cart
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </article>
             
-            <article class="menu-item col-md-6 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h3 class="menu-title card-title">Trammezini</h3>
-                        <p class="menu-desc card-text text-muted">Toasted Italian sandwich, various fillings.</p>
-                        
-                        <label for="trammezini-options" class="form-label visually-hidden">Trammezini Options</label>
-                        <select id="trammezini-options" class="form-select mb-3">
-                            <option selected>Select Filling</option>
-                            <option value="chicken-bacon">Chicken & Bacon</option>
-                            <option value="salami-cheese">Salami & Cheese</option>
-                            <option value="spinach-feta">Spinach & Feta</option>
-                        </select>
-                        
-                        <div class="menu-meta d-flex justify-content-between align-items-center mt-3">
-                            <span class="fw-bold">R55</span>
-                            <a class="btn btn-dark">
-                                <i class="bi bi-plus-circle" aria-hidden="true" style="text-align: center;"></i>
-                                Add item to Cart
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </article>
-
-            <article class="menu-item col-md-6 mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h3 class="menu-title card-title">Fries (Large)</h3>
-                        <p class="menu-desc card-text text-muted">Crispy potato fries</p>
-
-                        <label for="trammezini-options" class="form-label visually-hidden">Fries Options</label>
-                        <select id="trammezini-options" class="form-select mb-3">
-                            <option selected>Select Size</option>
-                            <option value="chicken-bacon">Small</option>
-                            <option value="salami-cheese">Medium</option>
-                            <option value="spinach-feta">Large</option>
-                        </select>
-
-                        <div class="menu-meta d-flex justify-content-between align-items-center mt-3">
-                            <span class="fw-bold">R25</span>
-                            <a class="btn btn-dark">
-                                <i class="bi bi-plus-circle" aria-hidden="true" style="text-align: center;"></i>
-                                Add item to Cart
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </article>
 
         </section>
         <p class="spaced-paragraph"></p>

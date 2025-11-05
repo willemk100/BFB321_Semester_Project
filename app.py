@@ -1,8 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
-## import pandas as pd ## Might need later for data manipulation
+
 
 app = Flask(__name__)
+app.secret_key = '12345'  # Needed for session management # I do not know what for
 
 # Database connection function
 def get_db_connection():
@@ -10,42 +11,98 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# Route to show all vendors - Used in customer-main.html
-@app.route('/vendors')
-def get_vendors():
+
+#Login Page - Where everything starts
+@app.route('/', methods=["GET", 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM user WHERE username = ? AND password = ?', (username, password)).fetchone()
+        
+
+        if user:
+            session['username'] = username
+            session['user_id'] = user['user_id']
+            session['user_type'] = user['user_type']
+            
+
+            if user['user_type'] == 'customer':
+                return redirect(url_for('customer_home'))
+            elif user['user_type'] == 'admin':
+                return redirect(url_for('admin_home'))
+            
+        # Check vendor table if not a user
+        conn = get_db_connection()
+        vendor = conn.execute('SELECT * FROM vendor WHERE username = ? AND password = ?', (username, password)).fetchone()
+
+        if vendor:
+            session['username'] = username
+            session['vendor_id'] = vendor['vendor_id']
+            session['user_type'] = 'vendor'
+            conn.close()
+
+            return redirect(url_for('vendor_home'))
+        
+        # Invalid Login or if there is an error
+        return render_template('login.html', error='Invalid username or password')
+
+    return render_template('login.html')
+
+# Customer home page 
+@app.route('/customer_home')
+def customer_home():
+    if session.get('user_type') != 'customer':
+        return redirect(url_for('login'))
+
     conn = get_db_connection()
-    # Get all vendors from the vendor table
     vendors = conn.execute('SELECT * FROM vendor').fetchall()
     conn.close()
     return render_template('customer-main.html', vendors=vendors)
+    
+# Admin home page 
+@app.route('/admin_home')
+def admin_home():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('login'))
+    return render_template('vendor_admin.html')
 
+# Vendor home page
+@app.route('/vendor_home')
+def vendor_home():
+    if session.get('user_type') != 'vendor':
+        return redirect(url_for('login'))
+    return render_template('vendor_main.html')
 
-
-# Get menu for [vendor] used in menu.html
-@app.route('/vendors/<int:vendor_id>/menu')
+#For log out
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+    
+# For view menu of [vendor]
+@app.route('/vendor/<int:vendor_id>/menu')
 def vendor_menu(vendor_id):
+    if session.get('user_type') != 'customer':
+        return redirect(url_for('login'))
+
     conn = get_db_connection()
-    # Get vendor details - Keep name and info
     selected_vendor = conn.execute('SELECT * FROM vendor WHERE vendor_id = ?', (vendor_id,)).fetchone()
-    # Get all menu items from this vendor
     menu_items = conn.execute('SELECT * FROM menuItem WHERE vendor_id = ?', (vendor_id,)).fetchall()
-    # Get a list of all the catagories fron the selected vendor menu items
-    catagories = list({item['catagory'] for item in menu_items})
     conn.close()
-    return render_template('menu.html',selected_vendor = selected_vendor, menuItems= menu_items, catagories=catagories)
+    
+    menu_items = [dict(item) for item in menu_items]
 
-
-
-
-# Make '/' load the same page as '/customers'
-# Will change this later to a landing page
-@app.route('/')
-def home():
-    return get_vendors()
+    # Format prices to 2 decimal places
+    for item in menu_items:
+        item['price'] = f"{item['price']:.2f}"
+        
+    categories = sorted({item['category'] for item in menu_items})
+    return render_template('menu.html', menu_items=menu_items, selected_vendor=selected_vendor, categories = categories)
 
 
 # Run the app
 if __name__ == '__main__':
-    app.run(debug=True)
-
     app.run(debug=True)
