@@ -105,12 +105,13 @@
                         <td>{{ item.name }}</td>
                         <td class="text-end">R{{ "%.2f"|format(item.price) }}</td>
                         <td class="text-end">R{{ "%.2f"|format(item.cost) }}</td>
+                        
+                        <!-- Edit and delete buttons -->
                         <td class="text-center">
                         <button class="btn btn-sm btn-outline-info me-2">Edit</button>
-                        </td>
-                        <!-- Delete function -->
-                        <td class="text-center">
-                            <a href="{{ url_for('vendor_edit_menu_item', item_id=item.menuItem_id) }}" class="btn btn-sm btn-outline-info me-2">Edit</a>
+                    
+                        
+                            <!-- <a href="{{ url_for('vendor_edit_menu_item', item_id=item.menuItem_id) }}" class="btn btn-sm btn-outline-info me-2">Edit</a> -->
                             
                             <!-- Delete Button -->
                             <form action="{{ url_for('vendor_delete_menu_item', item_id=item.menuItem_id) }}" method="POST" style="display:inline;">
