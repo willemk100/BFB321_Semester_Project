@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Trends - Food Ordering Platform</title>
+    <title>Product Forecasts - Food Ordering Platform</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 </head>
+
 <body>
     <header>
         <nav class="navbar" style="background-color: crimson;"     role="navigation" aria-label="Main navigation">
@@ -41,7 +42,7 @@
                     <!-- Edit Menu -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" style="color: ghostwhite;" href="vendor_menu.html" aria-current="page">
+                            <a class="nav-link active" style="color: ghostwhite;" href="vendor_customer_menu.html" aria-current="page">
                                 <i class="bi bi-file-text me-1" aria-hidden="true"></i>
                                 Edit Menu
                             </a>
@@ -65,23 +66,20 @@
     <main>
         <header class="mb-4">
             <h1 class="h2">
-                <i class="bi bi-arrow-up-right-square-fill me-2" aria-hidden="true"></i>
-                Product Trends
+                <i class="bi bi-bar-chart me-2" aria-hidden="true"></i>
+                Product Forecasts
             </h1>
         </header>
-        <div class="container mt-4">
-            <div class="row justify-content-center">
-                <div class="col-lg-12 col-md-10">
 
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-lg-12 col-md-10 figma-frame">
+                    
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        
+                    
                     </div>
 
                     <div class="d-flex justify-content-center mb-4 time-filter">
-                        <input type="radio" class="btn-check" name="time-filter" id="daily" autocomplete="off" checked>
-                        <label class="btn btn-outline-secondary" for="daily" >
-                            Daily
-                        </label>
                         <input type="radio" class="btn-check" name="time-filter" id="weekly" autocomplete="off">
                         <label class="btn btn-outline-secondary" for="weekly" >
                             Weekly
@@ -90,63 +88,67 @@
                         <label class="btn btn-outline-secondary" for="monthly" >
                             Monthly
                         </label>
-                        <input type="radio" class="btn-check" name="time-filter" id="yearly" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="yearly" >
-                            Yearly
-                        </label>
-                    </div>
-
-                    <div class="d-flex justify-content-center mb-4 metric-filter">
-                        <input type="radio" class="btn-check" name="time-filter" id="Orders" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="Orders" >
-                            #Orders
-                        </label>
-                        <input type="radio" class="btn-check" name="time-filter" id="Profit" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="Profit" >
-                            Profit
-                        </label>
-                        <input type="radio" class="btn-check" name="time-filter" id="Cost" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="Cost" >
-                            Cost
-                        </label>
                     </div>
 
                     <div class="d-flex justify-content-start mb-4 item-selector">
                         <span class="me-2">Select Item:</span>
                         <button type="button" class="btn btn-outline-dark me-4">Burgers</button>
-                        <span class="me-2">Compare to:</span>
-                        <button type="button" class="btn btn-outline-dark">Wraps</button>
                     </div>
 
-                    <div class="chart-placeholder mb-4">
-                        Line graph
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body p-3">
+                            <div class="table-responsive">
+                                <table class="table table-bordered align-middle text-center mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">Past Weeks</th>
+                                            <th scope="col">Units Sold</th>
+                                            <th scope="col">Most Frequent Pickup Time</th>
+                                            <th scope="col">Average Daily Orders During Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>12</td>
+                                            <td>16:00</td>
+                                            <td>2</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th scope="col">Item</th>
-                                    <th scope="col">Units Sold</th>
-                                    <th scope="col">Total Profit</th>
-                                    <th scope="col">Total Cost</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Burger</td>
-                                    <td>12</td>
-                                    <td>R400</td>
-                                    <td>R180</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                </tbody>
-                        </table>
+                    <div class="row pt-2 text-center">
+                        
+                        <div class="col-4">
+                            <p class="small text-muted mb-1">Predicted Demand</p>
+                            <div class="prediction-box mx-auto">13</div>
+                        </div>
+
+                        <div class="col-4">
+                            <p class="small text-muted mb-1">Busiest Time</p>
+                            <div class="prediction-box mx-auto">16:00</div>
+                        </div>
+
+                        <div class="col-4">
+                            <p class="small text-muted mb-1">Predicted Daily Demand During Peak Time</p>
+                            <div class="prediction-box mx-auto">2</div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -155,23 +157,22 @@
     </main>
 
     <footer class="mt-5 py-4">
-        <div class="container">
-            <hr class="my-3">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="text-muted small">&copy; 2025 Food Ordering Platform. All rights reserved.</p>
-                        Read our
-                        <a href="#" class="text-decoration-none">Privacy Policy</a> 
-                        and 
-                        <a href="#" class="text-decoration-none">Terms of Service</a>
-                        here.
-                    </p>
+            <div class="container">
+                <hr class="my-3">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <p class="text-muted small">&copy; 2025 Food Ordering Platform. All rights reserved.</p>
+                            Read our
+                            <a href="#" class="text-decoration-none">Privacy Policy</a> 
+                            and 
+                            <a href="#" class="text-decoration-none">Terms of Service</a>
+                            here.
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>
-

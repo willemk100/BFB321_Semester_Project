@@ -137,7 +137,7 @@ def add_vendor():
 
         if password != password_confirm:
             conn.close()
-            return render_template('new_vendor.html', error='Passwords do not match')
+            return render_template('admin_new_vendor.html', error='Passwords do not match')
 
          # Insert new vendor into the database
         
@@ -149,7 +149,7 @@ def add_vendor():
 
         return redirect(url_for('admin_home'))
 
-    return render_template('new_vendor.html')
+    return render_template('admin_new_vendor.html')
 
 #End of Add vendor page
 #===============================================================
@@ -170,7 +170,7 @@ def customer_home():
     conn = get_db_connection()
     vendors = conn.execute('SELECT * FROM vendor').fetchall()
     conn.close()
-    return render_template('customer-main.html', vendors=vendors)
+    return render_template('customer_main.html', vendors=vendors)
     
 #End of Customer home page
 #================================================================
@@ -195,7 +195,7 @@ def vendor_menu(vendor_id):
         item['price'] = f"{item['price']:.2f}"
 
     categories = sorted({item['category'] for item in menu_items})
-    return render_template('menu.html', menu_items=menu_items, selected_vendor=selected_vendor, categories = categories)
+    return render_template('customer_menu.html', menu_items=menu_items, selected_vendor=selected_vendor, categories = categories)
 
 #End of Menu section
 #================================================================
