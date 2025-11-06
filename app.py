@@ -75,7 +75,7 @@ def admin_home():
 ####################################
 
 # Add vendor page
-@app.route('/admin_home/add_vendor', methods=['GET', 'POST'])
+@app.route('/add_vendor', methods=['GET', 'POST'])
 def add_vendor():
     if session.get('user_type') != 'admin':
         return redirect(url_for('login'))
@@ -187,5 +187,5 @@ if __name__ == '__main__':
 #Vendor Analytics
 
 
-#End of Vendor Analytics
+#End of Vendor Analytics ### this is a comment
 #==========================================================
