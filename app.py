@@ -155,6 +155,25 @@ def vendor_menu(vendor_id):
     return render_template('menu.html', menu_items=menu_items, selected_vendor=selected_vendor, categories = categories)
 
 
+
+
+
+
+
 # Run the app
 if __name__ == '__main__':
     app.run(debug=True)
+
+#==========================================================
+#Vendor main 
+
+
+#End of Vendor Main 
+#==========================================================
+
+#==========================================================
+#Vendor Analytics
+
+
+#End of Vendor Analytics
+#==========================================================
