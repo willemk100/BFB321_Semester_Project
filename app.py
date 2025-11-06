@@ -1,18 +1,24 @@
+#===========================================================
+# Main Application File: app.py
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 
 
 app = Flask(__name__)
 app.secret_key = '12345'  # Needed for session management # I do not know what for
+#===========================================================
 
 # Database connection function
+#===========================================================
 def get_db_connection():
     conn = sqlite3.connect('ordering.db')
     conn.row_factory = sqlite3.Row
     return conn
-
+# End of Database connection function
+#===========================================================
 
 #Login Page - Where everything starts
+#===========================================================
 @app.route('/', methods=["GET", 'POST'])
 def login():
     if request.method == 'POST':
@@ -50,6 +56,9 @@ def login():
         return render_template('login.html', error='Invalid username or password')
 
     return render_template('login.html')
+#End of Login Page
+#===========================================================
+
 
 # Customer home page 
 @app.route('/customer_home')
@@ -166,16 +175,6 @@ if __name__ == '__main__':
 
 #==========================================================
 #Vendor main 
-#d
-#d
-#d
-#d
-#d
-#d
-#d
-#d
-#d
-#d
 
 
 #End of Vendor Main 
