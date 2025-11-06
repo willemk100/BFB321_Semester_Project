@@ -101,7 +101,7 @@ def admin_home():
     conn = get_db_connection()
     vendors = conn.execute('SELECT * FROM vendor').fetchall()
     conn.close()
-    return render_template('vendor_admin.html', vendors=vendors)
+    return render_template('admin_main.html', vendors=vendors)
 #End of Admin Home Page
 #===============================================================
 
