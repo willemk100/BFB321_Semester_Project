@@ -315,6 +315,35 @@ def vendor_menu_edit():
         menu_items=menu_items,
         categories=categories
     )
+
+
+# Delete menu item
+###########################################################
+@app.route('/vendor_delete_menu_item/<int:item_id>', methods=['POST'])
+def vendor_delete_menu_item(item_id):
+    if session.get('user_type') != 'vendor':
+        return redirect(url_for('login'))
+
+    vendor_id = session['vendor_id']
+    conn = get_db_connection()
+
+    # Make sure the item belongs to this vendor
+    item = conn.execute(
+        'SELECT * FROM menuItem WHERE menuItem_id = ? AND vendor_id = ?',
+        (item_id, vendor_id)
+    ).fetchone()
+
+    if item:
+        conn.execute('DELETE FROM menuItem WHERE menuItem_id = ?', (item_id,))
+        conn.commit()
+        flash(f'Item "{item["name"]}" deleted successfully!', 'success')
+    else:
+        flash('Menu item not found or does not belong to you.', 'danger')
+
+    conn.close()
+    return redirect(url_for('vendor_menu_edit'))
+#End Delete menu item
+###############################################
 #End of vendor menu editing page
 #===============================================================
 
