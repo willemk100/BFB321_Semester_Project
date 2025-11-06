@@ -40,11 +40,7 @@
 
             <!-- <h1 class="h3 text-center mb-4">Insert Your Details</h1> -->
             <header class="text-center mb-4">
-                {% if error %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ error }}
-                    </div>
-                {% endif %}
+                
                 <i class="bi bi-building-fill-add fs-1" aria-hidden="true"></i>
                 <h3 class="text-center mb-2">Insert your details</h3>
                 <p class="text-center text-muted mb-4">Create your vendor account</p>
@@ -54,8 +50,12 @@
 <!-- Form for adding new vendors-->
 
 
-            <form action="#" method="POST">
-
+            <form action="{{ url_for('add_vendor') }}" method="POST">
+                {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endif %}
                 <div class="row mb-3 align-items-center">
                     <label for="vendorName" class="col-sm-4 col-form-label text-end-custom" >Vendor Name</label>
                     <div class="col-sm-8">
@@ -132,12 +132,7 @@
                 <hr class="my-4">
                 <div class="d-grid gap-2">
 
-                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                                        <!-- <i aria-hidden="true"></i> -->
-                                        I'm hungry, let's go!</button>
-
-                    <button type ="submit"  class="btn btn-lg text-white"  style="background-color: crimson;">
+                    <button type ="submit" class="btn btn-lg text-white" style="background-color: crimson;">
                         <i class="bi bi-plus-circle me-2"></i>
                         Add new Vendor
                     </button>
