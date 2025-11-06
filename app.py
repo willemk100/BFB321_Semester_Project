@@ -25,7 +25,7 @@ def get_db_connection():
 
 #LOGIN AND NEW USER PAGES!!!
 #***********************************************************
-#Login Page - Where everything starts
+#Login Page - Where everything starts (login.html)
 #===========================================================
 @app.route('/', methods=["GET", 'POST'])
 def login():
@@ -76,7 +76,7 @@ def logout():
 #End of log out
 #===========================================================
 
-#New Customer Registration Page
+#New Customer Registration Page (new_customer.html)
 #===========================================================
 
 
@@ -92,7 +92,7 @@ def logout():
  
 #ADMIN SECTION!!!
 #************************************************************
-#Admin Home Page
+#Admin Home Page (admin_main.html)
 #===========================================================
 @app.route('/admin_home')
 def admin_home():
@@ -105,7 +105,7 @@ def admin_home():
 #End of Admin Home Page
 #===============================================================
 
-#Add vendor page
+#Add vendor page 
 #===============================================================
 @app.route('/add_vendor', methods=['GET', 'POST'])
 def add_vendor():
@@ -160,7 +160,7 @@ def add_vendor():
 
 #CUSTOMER SECTION!!!
 #***************************************************************
-#Customer home page 
+#Customer home page (customer_main.html)
 #================================================================
 @app.route('/customer_home')
 def customer_home():
@@ -175,7 +175,7 @@ def customer_home():
 #End of Customer home page
 #================================================================
 
-#Menu section
+#Menu section (customer_menu.html)
 #================================================================
 # For view menu of [vendor]
 @app.route('/vendor/<int:vendor_id>/menu')
@@ -196,18 +196,31 @@ def vendor_menu(vendor_id):
 
     categories = sorted({item['category'] for item in menu_items})
     return render_template('customer_menu.html', menu_items=menu_items, selected_vendor=selected_vendor, categories = categories)
-
 #End of Menu section
 #================================================================
 
+#Customer cart page (customer_cart.html)
+#================================================================
+#!! code
 
+
+#End of Customer cart page
+#================================================================
+
+#Confirm payment page (customer_confirm_payment.html)
+#================================================================
+#!! code
+
+
+#End of Confirm payment page
+#================================================================
 #End of CUSTOMER SECTION!!!
 #***************************************************************
 
 
 #VENDOR SECTION!!!
 #***************************************************************
-# Vendor home page
+# Vendor orders page (vendor_main.html)
 #===============================================================
 @app.route('/vendor_home')
 def vendor_home():
@@ -215,6 +228,63 @@ def vendor_home():
         return redirect(url_for('login'))
     return render_template('vendor_main.html')
 #End of Vendor home page
+#===============================================================
+
+#vendor menu page (vendor_menu.html)
+#===============================================================    
+#!! code
+
+
+
+
+#End of vendor menu page
+#===============================================================
+
+#vendor new menu item page (vendor_new_menu_item.html)
+#===============================================================
+#!! code
+
+
+
+#End of vendor new menu item page
+#===============================================================
+
+#vendor analytics page (vendor_analytics.html)
+#===============================================================
+#!! code
+
+
+
+#End of vendor analytics page
+#===============================================================
+
+#vendor analytics ABC page (vendor_analytics_ABC.html)
+#===============================================================
+#!! code
+
+
+
+
+#End of vendor analytics ABC page
+#===============================================================
+
+#vendor analytics trends page (vendor_analytics_trends.html)
+#===============================================================
+#!! code
+
+
+
+
+#End of vendor analytics trends page
+#===============================================================
+
+#vendor analytics forecasting page (vendor_analytics_forecasting.html)
+#===============================================================
+#!! code
+
+
+
+#End of vendor analytics forecasting page
 #===============================================================
 #End of VENDOR SECTION!!!
 #***************************************************************
