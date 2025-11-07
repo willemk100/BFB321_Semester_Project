@@ -13,7 +13,7 @@
         <nav class="navbar" style="background-color: crimson;" role="navigation" aria-label="Main navigation">
             <div class="container">
                 <a class="navbar-brand" style="color: ghostwhite;">
-                    <img src="images/up-logo.png" alt="UPLogo" width="90" height="30" aria-hidden="true" class="d-inline-block align-text-top">  
+                    <img src="{{ url_for('static', filename='up-logo.png') }}" alt="UPLogo" width="90" height="30" aria-hidden="true" class="d-inline-block align-text-top">  
                     Food Ordering Platform
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,7 +22,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" style="color: ghostwhite;" href="customer-main.html" aria-current="page">
+                            <a class="nav-link active" style="color: ghostwhite;" href="customer_main.html" aria-current="page">
                                 <i class="bi bi-house me-1" aria-hidden="true"></i>
                                 Home
                             </a>
@@ -76,7 +76,7 @@
                                     <input type="text" class="form-control" id="displayTOTAL" value="R120.00" readonly>
                                 </div>
                                 <div class="col-auto">
-                                    <a href="Customer_cart.html" type="submit" class="btn btn-dark mb-3">
+                                    <a href="customer_cart.html" type="submit" class="btn btn-dark mb-3">
                                             <i aria-hidden="true"></i>
                                             Edit Order
                                         </a>
@@ -150,7 +150,7 @@
                             <fieldset class="row mb-3">
                                 <div class="col-md">
                                    <div class="d-grid">
-                                        <a href="customer-main.html" class="btn bi-check-circle btn-outline-success btn-lg">
+                                        <a href="customer_main.html" class="btn bi-check-circle btn-outline-success btn-lg">
                                             <i aria-hidden="true"></i>
                                             Confirm and Pay
                                         </a>

@@ -14,14 +14,14 @@
         <nav class="navbar" style="background-color: crimson;"     role="navigation" aria-label="Main navigation">
             <div class="container">
                 <a class="navbar-brand" style="color: ghostwhite;">
-                    <img src="images/up-logo.png" alt="UPLogo" width="90" height="30" aria-hidden="true" class="d-inline-block align-text-top">  
+                    <img src="{{ url_for('static', filename='up-logo.png') }}" alt="UPLogo" width="90" height="30" aria-hidden="true" class="d-inline-block align-text-top">  
                     Food Ordering Platform
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="container nav">
-                    <a href="Vendor-Analytics.html" class="nav-link" style="color: ghostwhite;">
+                    <a href="vendor_analytics.html" class="nav-link" style="color: ghostwhite;">
                         <i class="bi bi-arrow-left me-1"></i>
                         Back
                     </a>
@@ -32,7 +32,7 @@
                     <!-- Orders -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" style="color: ghostwhite;" href="vendor-main.html" aria-current="page">
+                            <a class="nav-link active" style="color: ghostwhite;" href="vendor_main.html" aria-current="page">
                                 <i class="bi bi-cup-straw me-1" aria-hidden="true"></i>
                                 Orders
                             </a>
@@ -42,7 +42,7 @@
                     <!-- Edit Menu -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" style="color: ghostwhite;" href="Vendor_Menu.html" aria-current="page">
+                            <a class="nav-link active" style="color: ghostwhite;" href="vendor_customer_menu.html" aria-current="page">
                                 <i class="bi bi-file-text me-1" aria-hidden="true"></i>
                                 Edit Menu
                             </a>
@@ -52,7 +52,7 @@
                     <!-- Logout -->
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" style="color: ghostwhite;" href="login.html">
+                            <a class="nav-link" style="color: ghostwhite;" href="{{ url_for('logout') }}">
                                 <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>
                                 Log Out
                             </a>
