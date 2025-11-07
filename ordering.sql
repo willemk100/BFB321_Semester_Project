@@ -223,7 +223,7 @@ INSERT INTO "menuItem" ("menuItem_id", "vendor_id", "category", "name", "price",
 (1009, 101, 'Tramezini', 'Chicken, Bacon & Cheese', 59.90, 39.90),
 (1010, 101, 'Burgers', 'Beef', 34.90, 26.90),
 (1011, 101, 'Burgers', 'Chicken', 34.90, 26.90),
-(1012, 101, 'Burgers', 'Rib', 34.90, 26.90)
+(1012, 101, 'Burgers', 'Rib', 34.90, 26.90),
 (1013, 101, 'Fries', 'Small', 15.00, 10.00),
 (1014, 101, 'Fries', 'Medium', 20.00, 12.00),
 (1015, 101, 'Fries', 'Large', 25.00, 15.00);
