@@ -314,7 +314,7 @@ def vendor_home():
         -- into a single string for the 'Order (Products)' column.
         GROUP_CONCAT(CAST(mI.name AS TEXT) || ' (R' || printf('%.2f', oi.price_per_item) || ')', ', ') AS order_products_summary
     FROM "orders" o
-    JOIN "orderItem" oi ON o.order_id = oi.order_order_id
+    JOIN "orderItem" oi ON o.order_id = oi.orders_order_id
     JOIN "menuItem" mI ON oi.menuItem_menuItem_id = mI.menuItem_id
     WHERE oi.vendor_id = ?  -- Filter to show only orders belonging to the current vendor
     GROUP BY o.order_id, o.collection_time, o.status
