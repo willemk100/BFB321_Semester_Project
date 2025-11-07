@@ -333,6 +333,60 @@ def vendor_delete_menu_item(item_id):
 #End of vendor menu editing page
 #===============================================================
 
+#vendor edit existing menu item page (vendor_edit_menu_item.html)
+#===============================================================
+@app.route('/vendor_edit_menu_item/<int:item_id>', methods=['GET', 'POST'])
+def vendor_edit_menu_item(item_id):
+    if session.get('user_type') != 'vendor':
+        return redirect(url_for('login'))
+
+    vendor_id = session['vendor_id']
+    conn = get_db_connection()
+
+    item = conn.execute(
+        'SELECT * FROM menuItem WHERE menuItem_id = ? AND vendor_id = ?',
+        (item_id, vendor_id)
+    ).fetchone()
+
+    if not item:
+        conn.close()
+        flash('Menu item not found or does not belong to you.', 'danger')
+        return redirect(url_for('vendor_menu_edit'))
+
+    if request.method == 'POST':
+        name = request.form['name'].strip()
+        price_input = request.form['price'].strip()
+        cost_input = request.form['cost'].strip()
+
+        # Server-side validation (no "R" and max 2 decimals)
+        if "R" in price_input or "R" in cost_input:
+            flash("Do not include 'R' in price or cost fields.", "danger")
+            conn.close()
+            return redirect(url_for('vendor_edit_menu_item', item_id=item_id))
+
+        try:
+            price = round(float(price_input), 2)
+            cost = round(float(cost_input), 2)
+        except ValueError:
+            flash("Price and cost must be valid numeric values.", "danger")
+            conn.close()
+            return redirect(url_for('vendor_edit_menu_item', item_id=item_id))
+
+        conn.execute(
+            'UPDATE menuItem SET name = ?, price = ?, cost = ? WHERE menuItem_id = ?',
+            (name, price, cost, item_id)
+        )
+        conn.commit()
+        conn.close()
+
+        flash(f'Item "{name}" updated successfully!', 'success')
+        return redirect(url_for('vendor_menu_edit'))
+
+    conn.close()
+    return render_template('vendor_edit_menu_item.html', item=item)
+#End of vendor edit menu item page
+#===============================================================
+
 #vendor new menu item page (vendor_new_menu_item.html)
 #===============================================================
 @app.route('/vendor_new_menu_item', methods=['GET', 'POST'])

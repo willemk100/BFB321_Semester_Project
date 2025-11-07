@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendor Registration - Food Ordering Platform</title>
+    <title>Vendor Edit Menu Item - Food Ordering Platform</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
@@ -54,49 +54,44 @@
                     {% endif %}
                 {% endwith %}
 
-            <form action="{{ url_for('vendor_new_menu_item') }}" method="POST">
+        <form action="{{ url_for('vendor_edit_menu_item', item_id=item['menuItem_id']) }}" method="POST">
 
+            <div class="mb-3">
+                <label for="itemName" class="form-label">Item Name</label>
+                <input type="text" name="name" class="form-control" id="itemName" 
+                    value="{{ item['name'] }}" required>
+            </div>
 
-                <!-- Category Selection -->
-                <div class="mb-3">
-                    <label class="form-label">Category</label>
-                    <select name="existing_category" class="form-select mb-2">
-                        <option value="" selected>-- Select existing category --</option>
-                        {% for cat in categories %}
-                            <option value="{{ cat }}">{{ cat }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="text" name="new_category" class="form-control" placeholder="Or type a new category">
-                    <small class="text-muted">Choose one: select an existing category or enter a new one, not both.</small>
-                </div>
+            <div class="mb-3">
+                <label class="form-label">Category</label>
+                <input type="text" class="form-control" value="{{ item['category'] }}" readonly>
+            </div>
 
-                <!-- Item Name -->
-                <div class="mb-3">
-                    <label for="itemName" class="form-label">Item Name</label>
-                    <input type="text" name="name" class="form-control" id="itemName" placeholder="Enter item name" required>
-                </div>
+            <div class="mb-3">
+                <label for="sellingPrice" class="form-label">Selling Price (up to 2 decimals, no R)</label>
+                <input type="text" name="price" class="form-control" id="sellingPrice" 
+                    value="{{ item['price'] }}" 
+                    pattern="^\d+(\.\d{1,2})?$"
+                    title="Enter a valid number with up to 2 decimal places. Do not include 'R'." 
+                    required>
+            </div>
 
-    
-                <!-- Price -->
-                <div class="mb-3">
-                    <label for="sellingPrice" class="form-label">Selling Price (up to 2 decimals, no R)</label>
-                    <input type="number" name="price" step="0.01" class="form-control" id="sellingPrice" placeholder="e.g. 45.50" required>
-                </div>
+            <div class="mb-3">
+                <label for="estimatedCost" class="form-label">Estimated Cost (up to 2 decimals, no R)</label>
+                <input type="text" name="cost" class="form-control" id="estimatedCost" 
+                    value="{{ item['cost'] }}" 
+                    pattern="^\d+(\.\d{1,2})?$"
+                    title="Enter a valid number with up to 2 decimal places. Do not include 'R'." 
+                    required>
+            </div>
 
-                <!-- Estimated Cost -->
-                <div class="mb-3">
-                    <label for="estimatedCost" class="form-label">Estimated Cost (up to 2 decimals, no R)</label>
-                    <input type="number" name="cost" step="0.01" class="form-control" id="estimatedCost" placeholder="e.g. 25.00" required>
-                </div>
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-lg text-white" style="background-color: crimson;">
+                    <i class="bi bi-check-circle-fill me-2"></i> Save Changes
+                </button>
+            </div>
 
-                <!-- Submit Button -->
-                <div class="d-grid mt-4">
-                    <button type="submit" name="action" value="confirm" class="btn btn-lg text-white" style="background-color: crimson;">
-                        <i class="bi bi-check-circle-fill me-2"></i> Add Item
-                    </button>
-                </div>
-
-            </form>
+        </form>
         </div>
     </main>
 
