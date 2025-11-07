@@ -117,9 +117,11 @@
 
             <div class="table-responsive">
                 <table id="orderTrackingTable" class="table table-bordered table-hover">
+    <table id="orderTrackingTable" class="table table-bordered table-hover">
     <thead>
         <tr>
             <th>Order Tracking Number</th>
+            <th>Collection Time</th> 
             <th>Order (Products)</th>
             <th>Order Cost (ZAR)</th>
             <th>Order Fee</th>
@@ -129,7 +131,11 @@
         {% for order in orders %}
         <tr data-tracking-id="{{ order.tracking_id }}">
             <td>{{ order.tracking_id }}</td> 
-            <td>{{ order.order_products }}</td> <td>R{{ "%.2f"|format(order.cost) }}</td> {% set fee_status = order.fee_status %}
+            <td>{{ order.collection_time }}</td> 
+            <td>{{ order.order_products }}</td> 
+            <td>R{{ "%.2f"|format(order.cost) }}</td> 
+            
+            {% set fee_status = order.fee_status %}
             {% set status_class = 'text-success' if fee_status == 'Paid' else 'text-danger' %}
             
             <td class="{{ status_class }} fw-bold">{{ fee_status }}</td>
@@ -143,59 +149,6 @@
     <option value="{{ order.tracking_id }}">Order {{ order.tracking_id }}</option>
     {% endfor %}
 </select>
-
-<script>
-    // --- 1. Data Generation Functions REMOVED ---
-    // The data is now provided by the server using Jinja2.
-
-    // --- 2. Initialization and Population REMOVED/Simplified ---
-    // The table population is handled by the Jinja2 loop above. 
-    // We only need the DOMContentLoaded listener if we have other JS elements to initialize.
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Since Jinja2 populates the table and dropdown, we only need to call the initial update
-        // after the DOM is ready and the HTML has been rendered by the template engine.
-        updateDisplayedOrder();
-    });
-
-    
-    // --- 3. Dynamic Functionality (RETAINED) ---
-
-    // Function to update the Order Status card based on the selected order ID
-    function updateDisplayedOrder() {
-        const orderSelect = document.getElementById('orderSelect');
-        const dynamicTrackingNumber = document.getElementById('dynamicTrackingNumber');
-        
-        // Get the value from the select element (e.g., #001)
-        const selectedTrackingID = orderSelect.value; 
-
-        if (selectedTrackingID) {
-            // *** THE KEY EDIT IS HERE: Synchronize the Order Status header with the selected dropdown value ***
-            dynamicTrackingNumber.textContent = selectedTrackingID + " (Tenz Express)";
-            
-            // Reset status text when switching orders (simulate looking up a new order)
-            document.getElementById('dynamicOrderStatus').textContent = 'Awaiting Acceptance';
-            document.getElementById('dynamicOrderStatus').className = 'text-danger';
-        } else {
-            dynamicTrackingNumber.textContent = "N/A";
-        }
-    }
-    
-    // Function to simulate a status change on the Order Status card (RETAINED)
-    function updateOrderStatus(statusText, statusColorClass) {
-        const dynamicOrderStatus = document.getElementById('dynamicOrderStatus');
-        const orderTrackingHeading = document.getElementById('order-tracking-heading');
-
-        dynamicOrderStatus.textContent = statusText;
-        dynamicOrderStatus.className = '';
-        dynamicOrderStatus.classList.add(statusColorClass);
-
-        orderTrackingHeading.classList.add('animate-status-change');
-        setTimeout(() => {
-            orderTrackingHeading.classList.remove('animate-status-change');
-        }, 500);
-    }
-</script>
             </div>
         </section>
 

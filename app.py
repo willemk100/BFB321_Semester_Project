@@ -270,11 +270,71 @@ def vendor_menu(vendor_id):
 #***************************************************************
 # Vendor orders page (vendor_main.html)
 #===============================================================
+from flask import Flask, render_template, redirect, url_for, session
+import sqlite3
+# Assume 'get_db_connection' is defined elsewhere in your application (e.g., from . import get_db_connection)
+
+def get_db_connection():
+    # Placeholder function - Replace with your actual database connection logic
+    conn = sqlite3.connect('your_database_file.db') 
+    conn.row_factory = sqlite3.Row  # Crucial for accessing columns by name
+    return conn
+
 @app.route('/vendor_home')
 def vendor_home():
+    # 1. Authentication and Vendor ID Retrieval
     if session.get('user_type') != 'vendor':
         return redirect(url_for('login'))
-    return render_template('vendor_main.html')
+    
+    # *** IMPORTANT: Get the logged-in vendor_id from the session. ***
+    # For testing with your provided SQL data, we'll assume the logged-in vendor is 'Tenz' (vendor_id = 101).
+    vendor_id = session.get('user_id', 101) 
+    
+    conn = get_db_connection()
+    
+    # 2. SQL Query to fetch, aggregate, calculate, and sort order data
+    # Joins: order <-> orderItem <-> menuItem
+    sql_query = """
+    SELECT 
+        o.order_id, 
+        o.collection_time, 
+        o.status,
+        -- Calculate the total cost for the order by summing up price_per_item
+        SUM(oi.price_per_item) AS total_cost,
+        -- Use GROUP_CONCAT to combine all ordered item names and their price per item 
+        -- into a single string for the 'Order (Products)' column.
+        GROUP_CONCAT(CAST(mI.name AS TEXT) || ' (R' || printf('%.2f', oi.price_per_item) || ')', ', ') AS order_products_summary
+    FROM "order" o
+    JOIN "orderItem" oi ON o.order_id = oi.order_order_id
+    JOIN "menuItem" mI ON oi.menuItem_menuItem_id = mI.menuItem_id
+    WHERE oi.vendor_id = ?  -- Filter to show only orders belonging to the current vendor
+    GROUP BY o.order_id, o.collection_time, o.status
+    ORDER BY o.collection_time ASC; -- Sort the results by earliest collection time
+    """
+
+    orders_data_raw = conn.execute(sql_query, (vendor_id,)).fetchall()
+    conn.close()
+    
+    # 3. Process data for Jinja2 template
+    orders_for_template = []
+    for row in orders_data_raw:
+        # Determine the 'fee_status' based on the order 'status'
+        fee_status = 'Unpaid'
+        if row['status'] in ['Collected', 'Ready']:
+             fee_status = 'Paid'
+        
+        orders_for_template.append({
+            # The HTML table expects these keys:
+            'tracking_id': f"#{row['order_id']}",
+            'collection_time': row['collection_time'], 
+            'order_products': row['order_products_summary'],
+            'cost': row['total_cost'], # The calculated total cost (float/decimal)
+            'fee_status': fee_status, # 'Paid' or 'Unpaid'
+            'status': row['status']
+        })
+
+    # 4. Render the template
+    return render_template('vendor_main.html', orders=orders_for_template)
 #End of Vendor home page
 #===============================================================
 
