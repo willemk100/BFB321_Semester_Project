@@ -288,16 +288,6 @@ def vendor_menu(vendor_id):
 #***************************************************************
 # Vendor orders page (vendor_main.html)
 #===============================================================
-from flask import Flask, render_template, redirect, url_for, session
-import sqlite3
-# Assume 'get_db_connection' is defined elsewhere in your application (e.g., from . import get_db_connection)
-
-def get_db_connection():
-    # Placeholder function - Replace with your actual database connection logic
-    conn = sqlite3.connect('your_database_file.db') 
-    conn.row_factory = sqlite3.Row  # Crucial for accessing columns by name
-    return conn
-
 @app.route('/vendor_home')
 def vendor_home():
     # 1. Authentication and Vendor ID Retrieval
