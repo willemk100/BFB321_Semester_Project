@@ -529,9 +529,63 @@ def vendor_new_menu_item():
 
 #vendor analytics page (vendor_analytics.html)
 #===============================================================
-#!! code
+@app.route('/vendor_analytics')
+def vendor_analytics():
+    if session.get('user_type') != 'vendor':
+        return redirect(url_for('login'))
 
+    vendor_id = session['vendor_id']
+    conn = get_db_connection()
 
+    # 1. Completed Orders
+    completed_orders = conn.execute(
+        'SELECT COUNT(*) AS total_completed FROM "order" WHERE status="Collected" AND user_id IN (SELECT user_id FROM user)'
+    ).fetchone()['total_completed']
+
+    # 2. Revenue
+    revenue = conn.execute(
+        'SELECT SUM(price_per_item) AS total_revenue FROM orderItem WHERE vendor_id=?', (vendor_id,)
+    ).fetchone()['total_revenue'] or 0.0
+
+    # 3. Most Popular Item
+    popular_item_row = conn.execute(
+        '''
+        SELECT m.name, COUNT(*) AS quantity
+        FROM orderItem oi
+        JOIN menuItem m ON oi.menuItem_menuItem_id = m.menuItem_id
+        WHERE oi.vendor_id = ?
+        GROUP BY m.menuItem_id
+        ORDER BY quantity DESC
+        LIMIT 1
+        ''', (vendor_id,)
+    ).fetchone()
+    most_popular_item = popular_item_row['name'] if popular_item_row else 'N/A'
+
+    # 4. Sales History (latest 10 orders)
+    sales_history = conn.execute(
+        '''
+        SELECT o.order_id, GROUP_CONCAT(m.name, ', ') AS items,
+               SUM(oi.price_per_item) AS total_price,
+               o.order_date, o.collection_time
+        FROM "order" o
+        JOIN orderItem oi ON o.order_id = oi.orders_order_id
+        JOIN menuItem m ON oi.menuItem_menuItem_id = m.menuItem_id
+        WHERE oi.vendor_id = ?
+        GROUP BY o.order_id
+        ORDER BY o.order_date DESC, o.collection_time DESC
+        LIMIT 10
+        ''', (vendor_id,)
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        'vendor_analytics.html',
+        completed_orders=completed_orders,
+        revenue=f"{revenue:.2f}",
+        most_popular_item=most_popular_item,
+        sales_history=sales_history
+    )
 
 #End of vendor analytics page
 #===============================================================
