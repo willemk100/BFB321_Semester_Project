@@ -4,19 +4,37 @@
 #===========================================================
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
+import os
 
+# -----------------------------
+# Auto-create database if missing
+# -----------------------------
+if not os.path.exists("ordering.db"):
+    if os.path.exists("ordering.sql"):
+        with open("ordering.sql", "r", encoding="utf-8") as f:
+            sql_script = f.read()
+        conn = sqlite3.connect("ordering.db")
+        cursor = conn.cursor()
+        cursor.executescript(sql_script)
+        conn.commit()
+        conn.close()
+        print("Database 'ordering.db' created automatically.")
+    else:
+        print("'ordering.sql' not found. Please add the SQL file in the project folder.")
+
+# -----------------------------
+# Flask App Setup
+# -----------------------------
 app = Flask(__name__)
-app.secret_key = '12345'  # Needed for session management # I do not know what for
-# End of Main Application File
-#===========================================================
+app.secret_key = '12345'  # Needed for session management (stores login info, flash messages, etc.)
 
+# -----------------------------
 # Database connection function
-#===========================================================
+# -----------------------------
 def get_db_connection():
     conn = sqlite3.connect('ordering.db')
     conn.row_factory = sqlite3.Row
     return conn
-# End of Database connection function
 #===========================================================
 #End of INITIAL SETUP!!!
 #***********************************************************
