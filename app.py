@@ -822,7 +822,7 @@ def vendor_analytics_forecasting():
 
     vendor_id = session['vendor_id']
     conn = get_db_connection()
-
+      # Your code for forecasting analysis would go here
     conn.close() 
 
     return render_template('vendor_analytics_forecasting.html')
