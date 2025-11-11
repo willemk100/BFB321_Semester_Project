@@ -281,42 +281,47 @@ def customer_main():
     if session.get('user_type') != 'customer':
         return redirect(url_for('login'))
 
-    customer_id = session['user_id']
+    user_id = session.get('user_id')
+    conn = get_db_connection()
 
     # Get all vendors
-    conn = get_db_connection()
-    vendors = conn.execute('SELECT * FROM vendor').fetchall()
+    vendors = conn.execute("SELECT * FROM vendor").fetchall()
 
-    # Active order (not collected)
-    active_order = conn.execute(
-        'SELECT * FROM orders WHERE user_id = ? AND status != ? ORDER BY order_date DESC LIMIT 1',
-        (customer_id, 'Collected')
-    ).fetchone()
+    # Get active order (uncollected)
+    active_order = conn.execute("""
+        SELECT * FROM orders 
+        WHERE user_id = ? AND status != 'Collected' 
+        ORDER BY order_date DESC, order_id DESC
+        LIMIT 1
+    """, (user_id,)).fetchone()
 
-    # Order items for active order
     order_items = []
-    progress_value = 0
-    progress_class = ''
     if active_order:
-        order_items = conn.execute(
-            'SELECT * FROM order_items WHERE order_id = ?',
-            (active_order['order_id'],)
-        ).fetchall()
+        order_items = conn.execute("""
+            SELECT oi.*, m.name, m.category 
+            FROM orderItem oi 
+            JOIN menuItem m ON oi.menuItem_menuItem_id = m.menuItem_id 
+            WHERE oi.orders_order_id = ?
+        """, (active_order['order_id'],)).fetchall()
 
-        # Map order status to progress bar
-        status = active_order['status']
-        if status == 'Received':
-            progress_value = 25
-            progress_class = 'bg-warning'
-        elif status == 'Cooking':
-            progress_value = 50
-            progress_class = 'bg-primary'
-        elif status == 'Ready':
-            progress_value = 75
-            progress_class = 'bg-info'
-        elif status == 'Collected':
-            progress_value = 100
-            progress_class = 'bg-success'
+        # Map status to progress
+        status_map = {
+            'Submitted': (25, 'bg-warning'),
+            'Preparing': (50, 'bg-primary'),
+            'Ready': (75, 'bg-info'),
+            'Collected': (100, 'bg-success')
+        }
+        progress_value, progress_class = status_map.get(active_order['status'], (0, 'bg-secondary'))
+    else:
+        progress_value, progress_class = 0, 'bg-secondary'
+
+    # Get last collected order
+    last_collected_order = conn.execute("""
+        SELECT * FROM orders 
+        WHERE user_id = ? AND status = 'Collected'
+        ORDER BY order_date DESC, order_id DESC
+        LIMIT 1
+    """, (user_id,)).fetchone()
 
     conn.close()
 
@@ -326,8 +331,10 @@ def customer_main():
         active_order=active_order,
         order_items=order_items,
         progress_value=progress_value,
-        progress_class=progress_class
+        progress_class=progress_class,
+        last_collected_order=last_collected_order
     )
+
     
 #End of Customer home page
 #================================================================
