@@ -94,18 +94,17 @@ python app.py
 ```
 
 
-1. First the database needs to be initialised. Type the following in the terminal: 
-
-```bash
-sqlite3 ordering.db < ordering.sql
-```
-
-2. Ensure you have flask installed. In git bash terminal, type the following: 
+1. Ensure you have flask installed. In git bash terminal, type the following: 
 
 ```bash 
 pip install flask
 ```
 
+2. Ensure you have matplotlib insalled for graphs. In git bash terminal, type the following:
+```bash
+pip install matplotlib
+```
+ 
 3. When you have "app.py" open in the editor, type in the terminal: 
 
 ```bash

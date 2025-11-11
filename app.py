@@ -688,12 +688,6 @@ def vendor_analytics():
 
 #vendor analytics ABC page (vendor_analytics_ABC.html)
 #===============================================================
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
-
 def compute_date_range(timeframe):
     today = date.today()
     if timeframe == 'daily':
@@ -709,9 +703,12 @@ def compute_date_range(timeframe):
     end = today
     return start.isoformat(), end.isoformat()
 
-@app.route('/vendor/analytics/abc', methods=['GET'])
-def vendor_analytics_abc():
-    vendor_id = int(request.args.get('vendor_id', 101))
+@app.route('/vendor_analytics_ABC', methods=['GET'])
+def vendor_analytics_ABC():
+    if session.get('user_type') != 'vendor':
+        return redirect(url_for('login'))
+
+    vendor_id = session['vendor_id']
     timeframe = request.args.get('timeframe', 'daily')
     metric = request.args.get('metric', 'Profit')  # Profit, Cost, Orders
 
@@ -786,6 +783,8 @@ def vendor_analytics_abc():
     image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
     plt.close(fig)
 
+    
+
     return render_template('vendor_analytics_ABC.html',
                            image_data=image_base64,
                            data=data,
@@ -798,9 +797,17 @@ def vendor_analytics_abc():
 
 #vendor analytics trends page (vendor_analytics_trends.html)
 #===============================================================
-#!! code
+@app.route('/vendor_analytics_trends', methods=['GET'])
+def vendor_analytics_trends():
+    if session.get('user_type') != 'vendor':
+        return redirect(url_for('login'))
 
+    vendor_id = session['vendor_id']
+    conn = get_db_connection()
+    # Your code for trends analysis would go here
+    conn.close() 
 
+    return render_template('vendor_analytics_trends.html')
 
 
 #End of vendor analytics trends page
@@ -808,9 +815,17 @@ def vendor_analytics_abc():
 
 #vendor analytics forecasting page (vendor_analytics_forecasting.html)
 #===============================================================
-#!! code
+@app.route('/vendor_analytics_forecasting', methods=['GET'])
+def vendor_analytics_forecasting():
+    if session.get('user_type') != 'vendor':
+        return redirect(url_for('login'))
 
+    vendor_id = session['vendor_id']
+    conn = get_db_connection()
 
+    conn.close() 
+
+    return render_template('vendor_analytics_forecasting.html')
 
 #End of vendor analytics forecasting page
 #===============================================================
