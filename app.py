@@ -115,7 +115,7 @@ def add_customer():
         cell_number = request.form['cell_number']
         student_number = request.form['student_number']
         date_of_birth = request.form['date_of_birth']
-        phone_number = request.form['phone_number']
+        cell_number = request.form['cell_number']
         username = request.form['username']
         password = request.form['new_password']
         password_confirm = request.form['confirm_password']
@@ -138,8 +138,8 @@ def add_customer():
                      (username, password, student_number, name, surname, date_of_birth, cell_number, email, user_type))
         conn.commit()
         conn.close()
-
-        return redirect(url_for('log_in'))
+        flash('Account created successfully! Please log in.', 'success')
+        return redirect(url_for('login'))
 
     return render_template('new_customer.html')
 
