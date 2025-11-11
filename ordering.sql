@@ -188,7 +188,7 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 -- October 2
 (1004,3,'2025-10-02','10:45','Collected'),
 (1005,2,'2025-10-02','12:00','Collected'),
-(1006,3,'2025-10-02','13:30','Collected'),
+(1006,3,'2025-10-02','13:30','Uncollected'),
 -- October 3
 (1007,2,'2025-10-03','09:50','Collected'),
 (1008,3,'2025-10-03','11:15','Collected'),
@@ -199,7 +199,7 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 (1012,3,'2025-10-04','13:05','Collected'),
 -- October 5
 (1013,2,'2025-10-05','10:30','Collected'),
-(1014,3,'2025-10-05','12:00','Collected'),
+(1014,3,'2025-10-05','12:00','Uncollected'),
 (1015,2,'2025-10-05','13:20','Collected'),
 -- October 6
 (1016,3,'2025-10-06','09:50','Collected'),
@@ -212,7 +212,7 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 -- October 8
 (1022,3,'2025-10-08','10:15','Collected'),
 (1023,2,'2025-10-08','11:50','Collected'),
-(1024,3,'2025-10-08','13:05','Collected'),
+(1024,3,'2025-10-08','13:05','Uncollected'),
 -- October 9
 (1025,2,'2025-10-09','09:10','Collected'),
 (1026,3,'2025-10-09','11:35','Collected'),
@@ -230,7 +230,7 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 (1035,2,'2025-10-12','11:50','Collected'),
 (1036,3,'2025-10-12','13:05','Collected'),
 -- October 13
-(1037,2,'2025-10-13','10:10','Collected'),
+(1037,2,'2025-10-13','10:10','Uncollected'),
 (1038,3,'2025-10-13','11:35','Collected'),
 (1039,2,'2025-10-13','12:55','Collected'),
 -- October 14
@@ -243,7 +243,7 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 (1045,2,'2025-10-15','12:45','Collected'),
 -- October 16
 (1046,3,'2025-10-16','10:15','Collected'),
-(1047,2,'2025-10-16','11:50','Collected'),
+(1047,2,'2025-10-16','11:50','Uncollected'),
 (1048,3,'2025-10-16','13:05','Collected'),
 -- October 17
 (1049,2,'2025-10-17','10:10','Collected'),
@@ -262,7 +262,7 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 (1059,2,'2025-10-20','11:50','Collected'),
 (1060,3,'2025-10-20','13:05','Collected'),
 -- October 21
-(1061,2,'2025-10-21','10:10','Collected'),
+(1061,2,'2025-10-21','10:10','Uncollected'),
 (1062,3,'2025-10-21','11:35','Collected'),
 (1063,2,'2025-10-21','12:55','Collected'),
 -- October 22
@@ -275,7 +275,7 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 (1069,2,'2025-10-23','12:45','Collected'),
 -- October 24
 (1070,3,'2025-10-24','10:15','Collected'),
-(1071,2,'2025-10-24','11:50','Collected'),
+(1071,2,'2025-10-24','11:50','Uncollected'),
 (1072,3,'2025-10-24','13:05','Collected'),
 -- October 25
 (1073,2,'2025-10-25','10:10','Collected'),
