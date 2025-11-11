@@ -2,10 +2,12 @@
 #***********************************************************
 # Main Application File: app.py
 #===========================================================
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, g, session, flash
 import sqlite3
+import io, base64
 import os
-from datetime import datetime, timedelta # For date manipulations
+from datetime import datetime, timedelta, date # For date manipulations
+import matplotlib.pyplot as plt
 
 # -----------------------------
 # Auto-create database if missing
@@ -686,9 +688,109 @@ def vendor_analytics():
 
 #vendor analytics ABC page (vendor_analytics_ABC.html)
 #===============================================================
-#!! code
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
 
+def compute_date_range(timeframe):
+    today = date.today()
+    if timeframe == 'daily':
+        start = today
+    elif timeframe == 'weekly':
+        start = today - timedelta(days=6)
+    elif timeframe == 'monthly':
+        start = today.replace(day=1)
+    elif timeframe == 'yearly':
+        start = today.replace(month=1, day=1)
+    else:
+        start = date(1970,1,1)
+    end = today
+    return start.isoformat(), end.isoformat()
 
+@app.route('/vendor/analytics/abc', methods=['GET'])
+def vendor_analytics_abc():
+    vendor_id = int(request.args.get('vendor_id', 101))
+    timeframe = request.args.get('timeframe', 'daily')
+    metric = request.args.get('metric', 'Profit')  # Profit, Cost, Orders
+
+    start_date, end_date = compute_date_range(timeframe)
+    
+    # Use your existing database connection function
+    conn = get_db_connection()
+
+    query = """
+    SELECT
+        mi.category AS category,
+        COUNT(*) AS units_sold,
+        SUM(oi.price_per_item) AS total_revenue,
+        SUM(mi.cost) AS total_cost,
+        SUM(oi.price_per_item) - SUM(mi.cost) AS total_profit
+    FROM orderItem oi
+    JOIN orders o ON oi.orders_order_id = o.order_id
+    JOIN menuItem mi ON oi.menuItem_menuItem_id = mi.menuItem_id
+    WHERE oi.vendor_id = ?
+      AND date(o.order_date) BETWEEN date(?) AND date(?)
+    GROUP BY mi.category
+    """
+    rows = conn.execute(query, (vendor_id, start_date, end_date)).fetchall()
+    conn.close()  # Close after fetching
+
+    if not rows:
+        return render_template("vendor_analytics_ABC.html", image_data=None, data=[])
+
+    # Transform data
+    data = [{
+        'category': r['category'],
+        'units_sold': r['units_sold'],
+        'total_cost': r['total_cost'],
+        'total_profit': r['total_profit']
+    } for r in rows]
+
+    # Determine metric key
+    metric_key = 'units_sold' if metric == 'Orders' else \
+                 'total_cost' if metric == 'Cost' else 'total_profit'
+
+    # Sort by metric
+    data.sort(key=lambda x: x[metric_key], reverse=True)
+
+    # Compute cumulative percentage
+    values = [d[metric_key] for d in data]
+    total = sum(values) or 1
+    cum_percent = []
+    cum_sum = 0
+    for v in values:
+        cum_sum += v
+        cum_percent.append(cum_sum / total * 100)
+
+    # Create Pareto chart using matplotlib
+    fig, ax1 = plt.subplots(figsize=(6, 4))
+    ax1.bar([d['category'] for d in data], values, color='lightcoral')
+    ax1.set_ylabel(metric)
+    ax1.set_xlabel('Category')
+    plt.xticks(rotation=45, ha='right')
+
+    ax2 = ax1.twinx()
+    ax2.plot([d['category'] for d in data], cum_percent, color='black', marker='o')
+    ax2.set_ylabel('Cumulative %')
+    ax2.set_ylim(0, 110)
+
+    plt.title(f'Pareto Chart by {metric} ({timeframe.capitalize()})')
+    plt.tight_layout()
+
+    # Convert plot to base64 string
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+    plt.close(fig)
+
+    return render_template('vendor_analytics_ABC.html',
+                           image_data=image_base64,
+                           data=data,
+                           metric=metric,
+                           timeframe=timeframe)
 
 
 #End of vendor analytics ABC page

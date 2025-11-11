@@ -55,114 +55,48 @@
         </nav>
     </header>
 
-    <main>
-        <header class="mb-4">
-            <h1 class="h2">
-                <i class="bi bi-card-text me-2" aria-hidden="true"></i>
-                ABC Classification
-            </h1>
-        </header>
-        <div class="container mt-4">
-            <div class="row justify-content-center">
-                <div class="col-lg-12 col-md-10">
+    <main class="container mt-4">
+    <h2 class="mb-3">ABC Classification ({{ timeframe|capitalize }})</h2>
 
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        
+    {% if image_data %}
+    <div class="text-center mb-4">
+        <img src="data:image/png;base64,{{ image_data }}" alt="Pareto Chart" class="img-fluid rounded shadow">
+    </div>
+    {% else %}
+    <p class="text-danger text-center">No data available for the selected timeframe.</p>
+    {% endif %}
 
-                    </div>
+    <div class="table-responsive">
+        <table class="table table-striped text-center align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Category</th>
+                    <th>Units Sold</th>
+                    <th>Total Profit (R)</th>
+                    <th>Total Cost (R)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row.category }}</td>
+                    <td>{{ row.units_sold }}</td>
+                    <td>{{ "%.2f"|format(row.total_profit or 0) }}</td>
+                    <td>{{ "%.2f"|format(row.total_cost or 0) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
 
-                    <div class="d-flex justify-content-center mb-4 time-filter">
-                        <input type="radio" class="btn-check" name="time-filter" id="daily" autocomplete="off" checked>
-                        <label class="btn btn-outline-secondary" for="daily" >
-                            Daily
-                        </label>
-                        <input type="radio" class="btn-check" name="time-filter" id="weekly" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="weekly" >
-                            Weekly
-                        </label>
-                        <input type="radio" class="btn-check" name="time-filter" id="monthly" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="monthly" >
-                            Monthly
-                        </label>
-                        <input type="radio" class="btn-check" name="time-filter" id="yearly" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="yearly" >
-                            Yearly
-                        </label>
-                    </div>
+<footer class="text-center mt-4 py-3 text-muted small">
+    &copy; 2025 Food Ordering Platform. All rights reserved.
+</footer>
 
-                    <div class="d-flex justify-content-center mb-4 metric-filter">
-                        <input type="radio" class="btn-check" name="time-filter" id="Orders" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="Orders" >
-                            #Orders
-                        </label>
-                        <input type="radio" class="btn-check" name="time-filter" id="Profit" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="Profit" >
-                            Profit
-                        </label>
-                        <input type="radio" class="btn-check" name="time-filter" id="Cost" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="Cost" >
-                            Cost
-                        </label>
-                    </div>
-
-                    <div class="chart-placeholder mb-4">
-                        Pareto chart
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="table table-bordered align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th scope="col">Class</th>
-                                    <th scope="col">Item</th>
-                                    <th scope="col">Units Sold</th>
-                                    <th scope="col">Total Profit</th>
-                                    <th scope="col">Total Cost</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>A</td>
-                                    <td>Burger</td>
-                                    <td>12</td>
-                                    <td>R400</td>
-                                    <td>R180</td>
-                                </tr>
-                                <tr>
-                                    <td>B</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    
-
-    <footer class="mt-5 py-4">
-        <div class="container">
-            <hr class="my-3">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="text-muted small">&copy; 2025 Food Ordering Platform. All rights reserved.</p>
-                        Read our
-                        <a href="#" class="text-decoration-none">Privacy Policy</a> 
-                        and 
-                        <a href="#" class="text-decoration-none">Terms of Service</a>
-                        here.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>
+
+
 

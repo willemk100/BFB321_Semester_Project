@@ -152,7 +152,7 @@
     
     <!-- Tool 1: ABC Classification (3.2.1) -->
     <div class="col">
-        <a href="vendor_analytics_ABC.html" class="text-decoration-none">
+        <a href="{{ url_for('vendor_analytics_ABC') }}" class="text-decoration-none">
             <div class="card bg-info text-black shadow-sm h-100">
                 <div class="card-body">
                     <i class="bi bi-sort-alpha-down-alt display-6 mb-2" aria-hidden="true"></i>
@@ -169,16 +169,16 @@
 
     <!-- Product Trends -->
     <div class="col">
-        <a href="vendor_analytics_trends.html" class="text-decoration-none">
+        <a href="{{ url_for('vendor_analytics_trends', vendor_id=session['vendor_id'], timeframe='daily') }}" class="text-decoration-none">
             <div class="card bg-primary text-black shadow-sm h-100">
                 <div class="card-body">
                     <i class="bi bi-graph-up display-6 mb-2" aria-hidden="true"></i>
                     <h5 class="card-title">
                         Product Trends
                     </h5>
-                        <p class="card-text small opacity-75">
-                            View sales patterns and seasonal peaks
-                        </p>
+                    <p class="card-text small opacity-75">
+                        View sales patterns and seasonal peaks
+                    </p>
                 </div>
             </div>
         </a>
@@ -186,20 +186,21 @@
     
     <!-- Forecasting -->
     <div class="col">
-        <a href="vendor_analytics_forecasting.html" class="text-decoration-none">
+        <a href="{{ url_for('vendor_analytics_forecasting', vendor_id=session['vendor_id'], timeframe='daily') }}" class="text-decoration-none">
             <div class="card bg-warning text-black shadow-sm h-100">
                 <div class="card-body">
                     <i class="bi bi-bar-chart display-6 mb-2" aria-hidden="true"></i>
-                        <h5 class="card-title">
+                    <h5 class="card-title">
                         Forecasting
-                        </h5>
-                            <p class="card-text small opacity-75">
-                                Predict future demand for menu items
-                            </p>
+                    </h5>
+                    <p class="card-text small opacity-75">
+                        Predict future demand for menu items
+                    </p>
                 </div>
             </div>
         </a>
     </div>
+
 </div>
 
 
