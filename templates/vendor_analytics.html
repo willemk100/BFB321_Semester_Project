@@ -169,7 +169,7 @@
 
     <!-- Product Trends -->
     <div class="col">
-        <a href="{{ url_for('vendor_analytics_trends', vendor_id=session['vendor_id'], timeframe='daily') }}" class="text-decoration-none">
+        <a href="{{ url_for('vendor_analytics_trends') }}" class="text-decoration-none">
             <div class="card bg-primary text-black shadow-sm h-100">
                 <div class="card-body">
                     <i class="bi bi-graph-up display-6 mb-2" aria-hidden="true"></i>
@@ -186,7 +186,7 @@
     
     <!-- Forecasting -->
     <div class="col">
-        <a href="{{ url_for('vendor_analytics_forecasting', vendor_id=session['vendor_id'], timeframe='daily') }}" class="text-decoration-none">
+        <a href="{{ url_for('vendor_analytics_forecasting') }}" class="text-decoration-none">
             <div class="card bg-warning text-black shadow-sm h-100">
                 <div class="card-body">
                     <i class="bi bi-bar-chart display-6 mb-2" aria-hidden="true"></i>
