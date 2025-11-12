@@ -71,8 +71,10 @@
                         <a href="{{ url_for('decrement_cart_item', item_id=item.id) }}" class="btn btn-sm btn-outline-danger ms-2"> - </a>
                     {% endif %}
                 </td>
+                <!-- subtotal -->
                 <td>R{{ "%.2f"|format(item.price|float * item.quantity|int) }}</td>
                 <td>
+                    <!-- remove button -->
                     <a href="{{ url_for('remove_from_cart', item_id=item.id) }}" class="btn btn-sm btn-outline-danger">Remove</a>
                 </td>
             </tr>
@@ -85,11 +87,12 @@
         <h4>Total: R{{ "%.2f"|format(total|float) }}</h4>
         <div>
             <!--Add to cart -->
-            <a href="{{ url_for('customer_menu', vendor_id=session.get('last_vendor_id')) }}" class="btn btn-outline-primary">Add More Items</a>
+            <a href="{{ url_for('customer_menu', vendor_id=session.get('last_vendor_id')) }}" class="btn btn-primary">Add More Items</a>
             <!-- checkout button -->
             <a href="{{ url_for('checkout') }}" class="btn btn-success">Checkout</a>
         </div>
     </div>
+    <!-- if cart is empty -->
     {% else %}
         <p class="text-center mt-5">Your cart is empty.</p>
         
