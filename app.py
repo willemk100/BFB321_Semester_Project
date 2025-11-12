@@ -346,12 +346,16 @@ def customer_main():
 def customer_menu(vendor_id):
     if session.get('user_type') != 'customer':
         return redirect(url_for('login'))
+    
 
     conn = get_db_connection()
     selected_vendor = conn.execute('SELECT * FROM vendor WHERE vendor_id = ?', (vendor_id,)).fetchone()
     menu_items = conn.execute('SELECT * FROM menuItem WHERE vendor_id = ?', (vendor_id,)).fetchall()
     conn.close()
     
+    #save last vendor id in session
+    session['last_vendor_id'] = vendor_id
+
     menu_items = [dict(item) for item in menu_items]
 
     # Format prices to 2 decimal places
@@ -407,7 +411,7 @@ def add_to_cart(item_id, vendor_id):
 def view_cart():
     cart = session.get('cart', [])
     total = sum(item['price'] * item['quantity'] for item in cart)
-    return render_template('cart.html', cart=cart, total=total)
+    return render_template('customer_cart.html', cart=cart, total=total)
 
 #Plus button function
 ##########################################################
