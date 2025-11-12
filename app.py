@@ -342,8 +342,8 @@ def customer_main():
 #Menu section (customer_menu.html)
 #================================================================
 # For view menu of [vendor]
-@app.route('/vendor/<int:vendor_id>/menu')
-def vendor_menu(vendor_id):
+@app.route('/customer/<int:vendor_id>/menu')
+def customer_menu(vendor_id):
     if session.get('user_type') != 'customer':
         return redirect(url_for('login'))
 
