@@ -887,14 +887,13 @@ def vendor_analytics_ABC():
         return redirect(url_for('login'))
 
     vendor_id = session['vendor_id']
-    # timeframe can be 'monthly' or 'yearly' (or 'daily','weekly' if you want to keep)
-    timeframe = request.args.get('timeframe', 'monthly')  # default monthly view
-    # metric: 'Orders' -> units_sold, 'Cost' -> total_cost, 'Profit' -> total_profit
+    timeframe = request.args.get('timeframe', 'monthly')  # default monthly
     metric = request.args.get('metric', 'Profit')
+    month_filter = request.args.get('month_filter', 'october').lower()  # default: October
 
     conn = get_db_connection()
 
-    # Get dynamic min/max dates for vendor
+    # Get min/max dates from vendor's orders
     date_row = conn.execute("""
         SELECT 
             MIN(DATE(o.order_date)) AS min_date, 
@@ -906,28 +905,35 @@ def vendor_analytics_ABC():
 
     if not date_row or not date_row['min_date'] or not date_row['max_date']:
         conn.close()
-        return render_template("vendor_analytics_ABC.html", image_data=None, data=[], metric=metric, timeframe=timeframe)
+        return render_template("vendor_analytics_ABC.html", image_data=None, data=[], metric=metric, timeframe=timeframe, month_filter=month_filter)
 
     db_min_date = date.fromisoformat(date_row['min_date'])
     db_max_date = date.fromisoformat(date_row['max_date'])
 
-    # Compute start_date/end_date based on timeframe using DB max date
-    if timeframe == 'daily':
-        start_date = db_max_date
-    elif timeframe == 'weekly':
-        start_date = db_max_date - timedelta(days=6)
-    elif timeframe == 'monthly':
-        # singular monthly data: first day of the month of max_date
-        prev_month = (db_max_date.replace(day=1) - timedelta(days=1)).replace(day=1)
-        start_date = prev_month
+    # Determine start and end date
+    if timeframe == 'monthly':
+        prev_month = (db_max_date.replace(day=1) - timedelta(days=1)).replace(day=1)  # start of October if db_max_date is November
+
+        if month_filter == 'october':
+            start_date = prev_month
+            end_date = prev_month.replace(day=31)
+        elif month_filter == 'november':
+            start_date = db_max_date.replace(day=1)
+            end_date = db_max_date
+        elif month_filter == 'all':  # All (Oct + Nov)
+            start_date = prev_month
+            end_date = db_max_date
+        else:
+            start_date = prev_month
+            end_date = prev_month.replace(day=31)
     elif timeframe == 'yearly':
         start_date = db_max_date.replace(month=1, day=1)
+        end_date = db_max_date
     else:
         start_date = db_min_date
+        end_date = db_max_date
 
-    end_date = db_max_date
-
-    # Query per menu item (so we can label like "Burgers (Beef)")
+    # Query per menu item
     query = """
     SELECT
         mi.menuItem_id AS menu_item_id,
@@ -948,7 +954,6 @@ def vendor_analytics_ABC():
     rows = conn.execute(query, (vendor_id, start_date.isoformat(), end_date.isoformat())).fetchall()
     conn.close()
 
-    # Build data list with nice label e.g. "Burgers (Beef)"
     data = []
     for r in rows:
         label = f"{r['category']} ({r['item_name']})"
@@ -963,14 +968,12 @@ def vendor_analytics_ABC():
             'total_profit': float(r['total_profit'] or 0.0)
         })
 
-    # Which metric we use for ranking/classification
+    # Determine metric used
     metric_key = 'units_sold' if metric == 'Orders' else \
                  'total_cost' if metric == 'Cost' else 'total_profit'
 
-    # Sort descending by metric
     data.sort(key=lambda x: x[metric_key], reverse=True)
 
-    # Compute cumulative percentages on chosen metric
     values = [d[metric_key] for d in data]
     total_value = sum(values) or 1.0
     cum_sum = 0.0
@@ -979,7 +982,6 @@ def vendor_analytics_ABC():
         d['cum_value'] = cum_sum
         d['cum_percent'] = (cum_sum / total_value) * 100.0
 
-    # Assign ABC class (common thresholds: A = top 70%, B = next 20% (70-90), C = remaining)
     for d in data:
         cp = d['cum_percent']
         if cp <= 70.0:
@@ -989,15 +991,15 @@ def vendor_analytics_ABC():
         else:
             d['abc_class'] = 'C'
 
-    # Prepare plotting: bar chart of metric per item, colored by ABC class
+    # Plot ABC chart
     import matplotlib.pyplot as plt
     import io, base64
+    from matplotlib.patches import Patch
 
     labels = [d['label'] for d in data]
     plot_values = [d[metric_key] for d in data]
     classes = [d['abc_class'] for d in data]
 
-    # Choose colors by class
     color_map = {'A': 'tab:green', 'B': 'tab:orange', 'C': 'tab:gray'}
     colors = [color_map[c] for c in classes]
 
@@ -1007,38 +1009,36 @@ def vendor_analytics_ABC():
     ax.set_xticklabels(labels, rotation=45, ha='right')
     ax.set_ylabel(metric)
     ax.set_xlabel('Menu Item (Category (Name))')
-    ax.set_title(f'ABC Classification by {metric} ({timeframe.capitalize()}: {start_date} to {end_date})')
+    ax.set_title(f'ABC Classification by {metric} ({month_filter.capitalize()} {start_date.year})')
     plt.tight_layout()
 
-    # Add small legend manually
-    from matplotlib.patches import Patch
     legend_elements = [Patch(facecolor=color_map['A'], label='A (Top 70%)'),
                        Patch(facecolor=color_map['B'], label='B (70-90%)'),
                        Patch(facecolor=color_map['C'], label='C (Bottom 10%)')]
     ax.legend(handles=legend_elements, loc='upper right')
 
-    # Add cumulative percent line (optional) on secondary axis
+    # Cumulative % line
     ax2 = ax.twinx()
     cum_percents = [d['cum_percent'] for d in data]
     ax2.plot(range(len(labels)), cum_percents, color='black', marker='o', linewidth=1)
     ax2.set_ylim(0, 110)
     ax2.set_ylabel('Cumulative %')
 
-    # Save figure to base64
     buf = io.BytesIO()
     plt.savefig(buf, format='png', bbox_inches='tight')
     buf.seek(0)
     image_base64 = base64.b64encode(buf.read()).decode('utf-8')
     plt.close(fig)
 
-    # Send data to template (so template can show table or legend if desired)
     return render_template('vendor_analytics_ABC.html',
                            image_data=image_base64,
                            data=data,
                            metric=metric,
                            timeframe=timeframe,
+                           month_filter=month_filter,
                            start_date=start_date,
                            end_date=end_date)
+
 
 
 
