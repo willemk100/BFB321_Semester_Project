@@ -1047,17 +1047,109 @@ def vendor_analytics_ABC():
 
 #vendor analytics trends page (vendor_analytics_trends.html)
 #===============================================================
+def get_db_connection():
+    conn = sqlite3.connect('ordering.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
 @app.route('/vendor_analytics_trends', methods=['GET'])
 def vendor_analytics_trends():
     if session.get('user_type') != 'vendor':
         return redirect(url_for('login'))
 
     vendor_id = session['vendor_id']
-    conn = get_db_connection()
-    # Your code for trends analysis would go here
-    conn.close() 
 
-    return render_template('vendor_analytics_trends.html')
+    # Fetch all menu items for the vendor
+    conn = get_db_connection()
+    menu_items = conn.execute(
+        "SELECT category, name FROM menuItem WHERE vendor_id=?",
+        (vendor_id,)
+    ).fetchall()
+    menu_items_list = [f"{item['category']}({item['name']})" for item in menu_items]
+
+    # Get query parameters
+    product1 = request.args.get('product1', menu_items_list[0] if menu_items_list else '')
+    product2 = request.args.get('product2', menu_items_list[1] if len(menu_items_list) > 1 else '')
+    metric = request.args.get('metric', 'Units Sold')
+    timeframe = request.args.get('timeframe', 'monthly')  # 'monthly' or 'yearly'
+    month = request.args.get('month', 'October')  # Only used if timeframe=monthly
+
+    # Helper function to fetch data for line graph
+    def get_product_data(product_display, timeframe, month):
+        if '(' in product_display and ')' in product_display:
+            category, name = product_display.split('(')
+            name = name.rstrip(')')
+        else:
+            category, name = '', product_display
+
+        query = """
+        SELECT o.order_date, oi.price_per_item, m.cost
+        FROM orderItem oi
+        JOIN orders o ON oi.orders_order_id = o.order_id
+        JOIN menuItem m ON oi.menuItem_menuItem_id = m.menuItem_id
+        WHERE oi.vendor_id=? AND m.name=? AND m.category=?
+        """
+        rows = conn.execute(query, (vendor_id, name, category)).fetchall()
+        data = {}
+        for row in rows:
+            date_key = row['order_date']
+            # Filter by month if monthly
+            if timeframe == 'monthly':
+                if month == 'October' and not date_key.startswith('2025-10'):
+                    continue
+                if month == 'November' and not date_key.startswith('2025-11'):
+                    continue
+            elif timeframe == 'yearly':
+                if not (date_key.startswith('2025-10') or date_key.startswith('2025-11')):
+                    continue
+            if date_key not in data:
+                data[date_key] = {'Units Sold':0, 'Total Profit':0, 'Total Cost':0}
+            data[date_key]['Units Sold'] += 1
+            data[date_key]['Total Profit'] += row['price_per_item'] - row['cost']
+            data[date_key]['Total Cost'] += row['cost']
+        return data
+
+    data1 = get_product_data(product1, timeframe, month)
+    data2 = get_product_data(product2, timeframe, month)
+
+    # Prepare line graph with sorted dates
+    all_dates = sorted(set(list(data1.keys()) + list(data2.keys())))
+    # Convert to datetime objects for proper sorting and plotting
+    all_dates_dt = [datetime.strptime(d, "%Y-%m-%d") for d in all_dates]
+
+    values1 = [data1.get(d.strftime("%Y-%m-%d"), {metric:0})[metric] for d in all_dates_dt]
+    values2 = [data2.get(d.strftime("%Y-%m-%d"), {metric:0})[metric] for d in all_dates_dt]
+
+    plt.figure(figsize=(12,5))
+    plt.plot(all_dates_dt, values1, marker='o', label=product1)
+    plt.plot(all_dates_dt, values2, marker='o', label=product2)
+    plt.title(f"{metric} Trends")
+    plt.xlabel("Date")
+    plt.ylabel(metric)
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.legend()
+
+    # Format X-axis as 'DD MMM' for readability
+    plt.gca().xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%d %b'))
+
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    graph_url = base64.b64encode(img.getvalue()).decode()
+    plt.close()
+
+    conn.close()
+
+    return render_template('vendor_analytics_trends.html',
+                           graph_url=graph_url,
+                           menu_items=menu_items_list,
+                           product1=product1,
+                           product2=product2,
+                           metric=metric,
+                           timeframe=timeframe,
+                           month=month)
 
 
 #End of vendor analytics trends page
