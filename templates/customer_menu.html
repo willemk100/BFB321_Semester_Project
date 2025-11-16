@@ -90,7 +90,7 @@
                                 </div>
                                 <form action="{{ url_for('add_to_cart', item_id=item['menuItem_id'], vendor_id=selected_vendor.vendor_id) }}" method="GET" class="d-flex align-items-center">
                                     <!-- Add button -->
-                                    <button type="submit" class="btn btn-primary btn-sm">
+                                    <button type="submit" class="btn btn-dark btn-sm">
                                         <i class="bi bi-plus-circle"></i> Add
                                     </button>
                                 </form>
@@ -104,9 +104,7 @@
         {% endfor %}
     </section>
 
-    <hr class="my-3">
-
-        
+    <hr class="my-3">       
 </main>
 
     <footer class="mt-5 py-4">
