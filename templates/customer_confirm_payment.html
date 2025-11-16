@@ -58,7 +58,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% set total = 0 %}
                     {% for item in cart %}
                         {% set subtotal = item.price * item.quantity %}
                         {% set total = total + subtotal %}
@@ -74,7 +73,7 @@
                 <tfoot>
                     <tr>
                         <th colspan="4" class="text-end">TOTAL:</th>
-                        <th>R{{ '%.2f'|format(total) }}</th>
+                        <th>R{{ '%.2f'|format(total|float) }}</th>
                     </tr>
                 </tfoot>
             </table>

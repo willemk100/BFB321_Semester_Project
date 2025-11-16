@@ -505,39 +505,32 @@ def confirm_payment_cash():
     if not cart:
         flash("Your cart is empty.", "info")
         return redirect(url_for('customer_main'))
-    
-    # --- Add this here, after you get the cart ---
-    total = sum(item['price'] * item['quantity'] for item in cart)
 
+    total = sum(item['price'] * item['quantity'] for item in cart)
     pickup_times = generate_pickup_times()
+
     if request.method == 'POST' and 'confirm_payment' in request.form:
         selected_pickup = request.form.get('pickup_time')
-
-        # Check if within operating hours
         if not pickup_times:
-            flash("Sorry, the vendor is closed. Orders can only be placed between 08:00 and 16:00.", "danger")
-            
-
-        if not selected_pickup:
+            flash("Sorry, vendor is closed. Orders can only be placed 08:00–16:00.", "danger")
+        elif not selected_pickup:
             flash("Please select a pickup time.", "danger")
-            return render_template(
-                'customer_confirm_payment.html',
-                cart=cart,
-                pay_option='cash',
-                pickup_times=pickup_times
-            )
-
-        process_order(cart, payment_method='cash', payment_status='unpaid', pickup_time=selected_pickup)
-        session.pop('cart', None)
-        flash("Order confirmed!", "success")
-        return redirect(url_for('customer_main'))
+        else:
+            process_order(cart, payment_method='cash', payment_status='unpaid', pickup_time=selected_pickup)
+            session.pop('cart', None)
+            flash("Order confirmed!", "success")
+            return redirect(url_for('customer_main'))
 
     return render_template(
         'customer_confirm_payment.html',
         cart=cart,
+        total=total,
         pay_option='cash',
-        pickup_times=pickup_times
+        pickup_times=pickup_times,
+        errors={},
+        form_data={}
     )
+
 
 @app.route('/confirm_payment/online', methods=['GET', 'POST'])
 def confirm_payment_online():
@@ -545,61 +538,54 @@ def confirm_payment_online():
     if not cart:
         flash("Your cart is empty.", "info")
         return redirect(url_for('customer_main'))
-    
-    # --- Add this here, after you get the cart ---
-    total = sum(item['price'] * item['quantity'] for item in cart)
 
+    total = sum(item['price'] * item['quantity'] for item in cart)
     pickup_times = generate_pickup_times()
-    selected_pickup = None
-    errors = {}  # Store field-specific errors
+    errors = {}
+    form_data = request.form
 
     if request.method == 'POST' and 'confirm_payment' in request.form:
+        # Pickup time
+        selected_pickup = form_data.get('pickup_time')
         if not pickup_times:
-            flash("Sorry, the vendor is closed. Orders can only be placed between 08:00 and 16:00.", "danger")
-            
-
-        selected_pickup = request.form.get('pickup_time')
-        card_first = request.form.get('card_first', '').strip()
-        card_last = request.form.get('card_last', '').strip()
-        card_number = request.form.get('card_number', '').replace(" ", "")
-        card_cvv = request.form.get('card_cvv', '').strip()
-        card_expiry = request.form.get('card_expiry', '').strip()
-
-        # Validate pickup time
+            flash("Sorry, vendor is closed. Orders can only be placed 08:00–16:00.", "danger")
         if not selected_pickup:
             errors['pickup_time'] = "Please select a pickup time."
 
-        # Validate card fields
-        if not card_first:
-            errors['card_first'] = "First name is required."
-        if not card_last:
-            errors['card_last'] = "Last name is required."
-        if not card_number or not card_number.isdigit() or not (13 <= len(card_number) <= 19):
+        # Card validations
+        card_first = form_data.get('card_first', '').strip()
+        card_last = form_data.get('card_last', '').strip()
+        card_number = form_data.get('card_number', '').replace(" ", "")
+        card_cvv = form_data.get('card_cvv', '').strip()
+        card_expiry = form_data.get('card_expiry', '').strip()
+
+        if not card_first: errors['card_first'] = "First name required."
+        if not card_last: errors['card_last'] = "Last name required."
+        if not card_number.isdigit() or not (13 <= len(card_number) <= 19):
             errors['card_number'] = "Card number must be 13–19 digits."
-        if not card_cvv or not card_cvv.isdigit() or len(card_cvv) not in [3, 4]:
+        if not card_cvv.isdigit() or len(card_cvv) not in [3,4]:
             errors['card_cvv'] = "CVV must be 3 or 4 digits."
         try:
             exp_year, exp_month = map(int, card_expiry.split("-"))
-            today = datetime.today()
             exp_date = datetime(exp_year, exp_month, 1)
             exp_date = exp_date.replace(day=28) + timedelta(days=4)
             exp_date = exp_date - timedelta(days=exp_date.day)
-            if exp_date < today:
-                errors['card_expiry'] = "Card expiry has passed."
-        except Exception:
+            if exp_date < datetime.today(): errors['card_expiry'] = "Card expired."
+        except:
             errors['card_expiry'] = "Invalid expiry date."
 
         if errors:
             return render_template(
                 'customer_confirm_payment.html',
                 cart=cart,
+                total=total,
                 pay_option='online',
                 pickup_times=pickup_times,
                 errors=errors,
-                form_data=request.form
+                form_data=form_data
             )
 
-        # Process order
+        # All good, process order
         process_order(cart, payment_method='online', payment_status='paid', pickup_time=selected_pickup)
         session.pop('cart', None)
         flash("Order confirmed!", "success")
@@ -608,10 +594,11 @@ def confirm_payment_online():
     return render_template(
         'customer_confirm_payment.html',
         cart=cart,
+        total=total,
         pay_option='online',
         pickup_times=pickup_times,
-        errors={},
-        form_data={}
+        errors=errors,
+        form_data=form_data
     )
 
 # -------------------------
@@ -622,11 +609,15 @@ def process_order(cart, payment_method, payment_status, pickup_time):
     cur = conn.cursor()
     vendor_id = cart[0]['vendor_id']  # Assuming all items from same vendor
 
+    # Get current date
+    order_date = datetime.now().date()
+
     cur.execute("""
-        INSERT INTO orders (user_id, collection_time, status, payment_method, payment_status, created_at, updated_at)
-        VALUES (?, ?, 'Submitted', ?, ?, ?, ?)
+        INSERT INTO orders (user_id, order_date collection_time, status, payment_method, payment_status, created_at, updated_at)
+        VALUES (?, ?, ?, 'Submitted', ?, ?, ?, ?)
     """, (
         session.get('user_id'),
+        order_date,
         pickup_time,
         payment_method,
         payment_status,
