@@ -90,6 +90,7 @@ A user will be able to register for the platform. The admin user, a University e
 
 ```bash
 pip install flask
+pip insall matplotlib
 python app.py
 ```
 
@@ -105,7 +106,7 @@ pip install flask
 pip install matplotlib
 ```
  
-3. When you have "app.py" open in the editor, type in the terminal: 
+3. When you have "app.py" and "ordering.sql" open in the editor, type in the terminal: 
 
 ```bash
 python app.py
