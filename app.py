@@ -492,18 +492,19 @@ def generate_pickup_times():
     """Generate 30-min interval pickup times within operating hours."""
     now = datetime.now()
     if not is_open_now():
-        return []  # no times outside operating hours
+        return []  # No times outside operating hours
 
     times = []
     current_time = datetime.combine(now.date(), STANDARD_OPEN)
     end_time = datetime.combine(now.date(), STANDARD_CLOSE)
 
-    while current_time.time() <= STANDARD_CLOSE:
+    while current_time <= end_time:
         if current_time.time() > now.time():
             times.append(current_time.strftime("%H:%M"))
         current_time += timedelta(minutes=30)
-    
+
     return times
+
 
 @app.route('/confirm_payment', methods=['GET', 'POST'])
 def confirm_payment():
@@ -512,11 +513,14 @@ def confirm_payment():
         flash("Your cart is empty.", "info")
         return redirect(url_for('customer_main'))
 
+    # Generate pickup times if within operating hours
     pickup_times = generate_pickup_times()
+
+    # Default payment option
     pay_option = request.form.get('pay_option', 'cash')
 
-    if request.method == 'POST':
-        pickup_time_str = request.form.get('pickup_time')
+    if request.method == 'POST' and 'confirm_payment' in request.form:
+        pickup_time_str = request.form.get('pickup_time') if pickup_times else None
         pay_option = request.form.get('pay_option', 'cash')
         payment_method = 'online' if pay_option == 'online' else 'cash'
         payment_status = 'paid' if pay_option == 'online' else 'unpaid'
@@ -552,7 +556,12 @@ def confirm_payment():
         flash("Order confirmed!", "success")
         return redirect(url_for('customer_main'))
 
-    return render_template('customer_confirm_payment.html', cart=cart, pickup_times=pickup_times, pay_option=pay_option)
+    return render_template(
+        'customer_confirm_payment.html',
+        cart=cart,
+        pickup_times=pickup_times,
+        pay_option=pay_option
+    )
 #End of Confirm payment page
 #================================================================
 #End of CUSTOMER SECTION!!!

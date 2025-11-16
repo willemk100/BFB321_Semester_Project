@@ -67,14 +67,14 @@
                             <td>{{ item.category }}</td>
                             <td>R{{ '%.2f'|format(item.price) }}</td>
                             <td>{{ item.quantity }}</td>
-                            <td>R{{ '%.2f'|format(subtotal|float) }}</td>
+                            <td>R{{ '%.2f'|format(subtotal) }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
                 <tfoot>
                     <tr>
                         <th colspan="4" class="text-end">TOTAL:</th>
-                        <th>R{{ '%.2f'|format(total|float) }}</th>
+                        <th>R{{ '%.2f'|format(total) }}</th>
                     </tr>
                 </tfoot>
             </table>
@@ -90,7 +90,7 @@
                     <label for="pickup_time" class="col-md-4 col-form-label text-md-end">Pickup Time:</label>
                     <div class="col-md-4">
                         {% if pickup_times %}
-                            <select name="pickup_time" id="pickup_time" class="form-select" required>
+                            <select name="pickup_time" id="pickup_time" class="form-select">
                                 {% for time in pickup_times %}
                                     <option value="{{ time }}">{{ time }}</option>
                                 {% endfor %}
@@ -101,43 +101,39 @@
                     </div>
                 </div>
 
-                {% if not pickup_times %}
-                    <div class="alert alert-warning text-center">
-                        Orders cannot be placed at this time. Please come back during business hours.
-                    </div>
-                {% endif %}
-
                 <!-- Payment Method -->
                 <div class="mb-3">
                     <h5>Payment Method</h5>
                     <div class="form-check">
                         <input type="radio" class="form-check-input" name="pay_option" id="pay_cash" value="cash" 
-                               {% if pay_option == 'cash' %}checked{% endif %} 
-                               onchange="this.form.submit()">
+                               {% if pay_option == 'cash' %}checked{% endif %}>
                         <label class="form-check-label" for="pay_cash">Pay on Collection</label>
                     </div>
                     <div class="form-check">
                         <input type="radio" class="form-check-input" name="pay_option" id="pay_online" value="online" 
-                               {% if pay_option == 'online' %}checked{% endif %} 
-                               onchange="this.form.submit()">
+                               {% if pay_option == 'online' %}checked{% endif %}>
                         <label class="form-check-label" for="pay_online">Online Payment</label>
                     </div>
                 </div>
 
                 <!-- Card Details -->
-                {% if pay_option == 'online' %}
                 <div class="card p-3 mb-3">
                     <h5>Card Details</h5>
-                    <input type="text" class="form-control mb-2" name="card_first" placeholder="First Name" required>
-                    <input type="text" class="form-control mb-2" name="card_last" placeholder="Last Name" required>
-                    <input type="text" class="form-control mb-2" name="card_number" placeholder="Card Number" required>
-                    <input type="text" class="form-control mb-2" name="card_cvv" placeholder="CVV" required>
-                    <input type="month" class="form-control" name="card_expiry" placeholder="MM/YY" required>
+                    {% set card_disabled = pay_option != 'online' %}
+                    <input type="text" class="form-control mb-2 {% if card_disabled %}bg-light{% endif %}" 
+                           name="card_first" placeholder="First Name" {% if card_disabled %}readonly{% endif %}>
+                    <input type="text" class="form-control mb-2 {% if card_disabled %}bg-light{% endif %}" 
+                           name="card_last" placeholder="Last Name" {% if card_disabled %}readonly{% endif %}>
+                    <input type="text" class="form-control mb-2 {% if card_disabled %}bg-light{% endif %}" 
+                           name="card_number" placeholder="Card Number" {% if card_disabled %}readonly{% endif %}>
+                    <input type="text" class="form-control mb-2 {% if card_disabled %}bg-light{% endif %}" 
+                           name="card_cvv" placeholder="CVV" {% if card_disabled %}readonly{% endif %}>
+                    <input type="month" class="form-control {% if card_disabled %}bg-light{% endif %}" 
+                           name="card_expiry" placeholder="MM/YY" {% if card_disabled %}readonly{% endif %}>
                 </div>
-                {% endif %}
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-lg btn-primary" {% if not pickup_times %}disabled{% endif %}>
+                    <button type="submit" name="confirm_payment" class="btn btn-lg btn-primary">
                         <i class="bi bi-check-circle"></i> Confirm and Pay
                     </button>
                 </div>
