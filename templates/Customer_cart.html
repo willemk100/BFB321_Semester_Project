@@ -48,7 +48,7 @@
     <table class="table table-striped mt-4">
         <thead>
             <tr>
-                <th>Item (Category)</th>
+                <th>Item </th>
                 <th>Price</th>
                 <th>Quantity</th>
                 <th>Subtotal</th>
@@ -59,7 +59,7 @@
             {% for item in cart %}
             <tr>
                 <!--Item name and category -->
-                <td>{{ item.name }} ({{ item.category }})</td>
+                <td>{{ item.name }} {{ item.category }}</td>
                 <!-- Price per item -->
                 <td>R{{ "%.2f"|format(item.price|float) }}</td>
                 <!-- Quantity with increment and decrement buttons -->
