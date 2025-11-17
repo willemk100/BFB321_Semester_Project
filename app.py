@@ -345,6 +345,7 @@ def customer_main():
 
         # Calculate total
         order_dict['total'] = sum(item['price_per_item'] for item in order_dict['items'])
+        
 
         # Progress mapping
         status_map = {
@@ -695,10 +696,11 @@ def process_order(cart, payment_method, payment_status, pickup_time):
     order_id = cur.lastrowid
 
     for item in cart:
-        cur.execute("""
-            INSERT INTO orderItem (orders_order_id, menuItem_menuItem_id, vendor_id, price_per_item)
-            VALUES (?, ?, ?, ?)
-        """, (order_id, item['id'], vendor_id, item['price']))
+        for _ in range(item['quantity']):
+            cur.execute("""
+                INSERT INTO orderItem (orders_order_id, menuItem_menuItem_id, vendor_id, price_per_item)
+                VALUES (?, ?, ?, ?)
+            """, (order_id, item['id'], vendor_id, item['price']))
 
     conn.commit()
     conn.close()

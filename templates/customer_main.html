@@ -71,18 +71,19 @@
                         <p><strong>Items:</strong></p>
                         <ul>
                             {% for item in order['items'] %}
-                                <li>{{ item['item_name'] }} ({{ item['category'] }}) - R{{ item['price_per_item'] }}</li>
+                                <li>{{ item['item_name'] }} {{ item['category'] }} - R{{ "%.2f"|format(item['price_per_item']) }}</li>
                             {% endfor %}
                         </ul>
-                        <p><strong>Total:</strong> R{{ order['total'] }}</p>
+                        <p><strong>Total:</strong> R{{ "%.2f"|format(order['total']) }}</p>
                         <p><strong>Payment Status:</strong>
                             {% if order['payment_status'] == 'paid' %}
                                 <span class="badge bg-success">Paid</span>
                             {% else %}
-                                <span class="badge bg-warning">Unpaid</span>
+                                <span class="badge bg-danger">Unpaid - Pay on Collection</span>
                             {% endif %}
                         </p>
-
+                        
+                        <!-- Progress bar code -->
                         <div class="progress mb-2">
                             <div class="progress-bar {{ order.progress_class }}" role="progressbar" aria-valuenow="{{ order.progress_value }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
@@ -142,8 +143,13 @@
             {% for order in last_collected_orders %}
                 <div class="card mb-2">
                     <div class="card-body">
-                        <h5>Order #{{ order['order_id'] }} — Vendor: {{ order['vendor_name'] }}</h5>
-                        <p>Date: {{ order['order_date'] }} | Collection Time: {{ order['collection_time'] }}</p>
+                        <h5>{{ order['vendor_name'] }}</h5>
+                        <ul>
+                            {% for item in order['items'] %}
+                                <li>{{ item['item_name'] }} ({{ item['category'] }}) - R{{ item['price_per_item'] }}</li>
+                            {% endfor %}
+                        </ul>
+                        <p><strong>Total:</strong> R{{ order['total'] }}</p>
                     </div>
                 </div>
             {% endfor %}
