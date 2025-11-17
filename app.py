@@ -277,11 +277,11 @@ def edit_vendor(vendor_id):
 STANDARD_OPEN = time(8, 0)   # 08:00
 STANDARD_CLOSE = time(16, 0) # 16:00
 
+#function to check if vendor is open
 def is_open_now():
     """Returns True if current time is within standard operating hours."""
     now = datetime.now().time()
     return STANDARD_OPEN <= now <= STANDARD_CLOSE
-
 
 #Customer home page (customer_main.html)
 #================================================================
@@ -481,24 +481,49 @@ def remove_from_cart(item_id):
 
 #Confirm payment page (customer_confirm_payment.html)
 #================================================================
+# Function to generate pickup times
+##########################################################
 def generate_pickup_times():
-    """Generate 30-min interval pickup times within operating hours."""
+    """Generate 5-min interval pickup times within operating hours,
+    starting 30 minutes from now and aligned to :00, :05, :10...:55."""
+    
     now = datetime.now()
+
+    # If closed now → no pickup times
     if not is_open_now():
-        return []  # No times outside operating hours
+        return []
 
     times = []
-    current_time = datetime.combine(now.date(), STANDARD_OPEN)
-    end_time = datetime.combine(now.date(), STANDARD_CLOSE)
 
-    while current_time <= end_time:
-        if current_time.time() > now.time():
-            times.append(current_time.strftime("%H:%M"))
-        current_time += timedelta(minutes=30)
+    # Operating hour boundaries
+    start = datetime.combine(now.date(), STANDARD_OPEN)
+    end = datetime.combine(now.date(), STANDARD_CLOSE)
+
+    # Start 30 minutes from now
+    start_time = now + timedelta(minutes=30)
+
+    # Round UP to nearest 5-min mark
+    minute_mod = start_time.minute % 5
+    if minute_mod != 0:
+        start_time += timedelta(minutes=(5 - minute_mod))
+    start_time = start_time.replace(second=0, microsecond=0)
+
+    # If the first available time is before opening → push to opening
+    if start_time < start:
+        start_time = start
+
+    # Generate 5-minute slots
+    current = start_time
+    while current <= end:
+        times.append(current.strftime("%H:%M"))
+        current += timedelta(minutes=5)
 
     return times
+#End of generate pickup times function
+###########################################################
 
-
+# Confirm payment if they choose to pay on collection (cash)
+############################################################
 @app.route('/confirm_payment/cash', methods=['GET', 'POST'])
 def confirm_payment_cash():
     cart = session.get('cart', [])
@@ -530,8 +555,11 @@ def confirm_payment_cash():
         errors={},
         form_data={}
     )
+#End of confirm payment if cash
+############################################################
 
-
+# Confirm payment if they choose to pay online (card)
+#############################################################
 @app.route('/confirm_payment/online', methods=['GET', 'POST'])
 def confirm_payment_online():
     cart = session.get('cart', [])
@@ -600,10 +628,11 @@ def confirm_payment_online():
         errors=errors,
         form_data=form_data
     )
+#End of confirm payment if online
+#############################################################
 
-# -------------------------
-# Helper function to insert order
-# -------------------------
+#final order processing function
+#########################################################
 def process_order(cart, payment_method, payment_status, pickup_time):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -613,7 +642,7 @@ def process_order(cart, payment_method, payment_status, pickup_time):
     order_date = datetime.now().date()
 
     cur.execute("""
-        INSERT INTO orders (user_id, order_date collection_time, status, payment_method, payment_status, created_at, updated_at)
+        INSERT INTO orders (user_id, order_date, collection_time, status, payment_method, payment_status, created_at, updated_at)
         VALUES (?, ?, ?, 'Submitted', ?, ?, ?, ?)
     """, (
         session.get('user_id'),
@@ -634,6 +663,8 @@ def process_order(cart, payment_method, payment_status, pickup_time):
 
     conn.commit()
     conn.close()
+#End of final order processing function
+#########################################################
 #End of Confirm payment page
 #================================================================
 #End of CUSTOMER SECTION!!!
