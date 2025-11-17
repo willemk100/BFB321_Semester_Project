@@ -189,8 +189,8 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 (1003,2,'2025-10-01','13:00','Collected','online','paid'),
 -- October 2
 (1004,3,'2025-10-02','10:45','Collected','online','paid'),
-(1005,2,'2025-10-02','12:00','Collected','online','paid'),
-(1006,3,'2025-10-02','13:30','Uncollected','cash','unpaid'),
+(1005,2,'2025-10-02','12:00','Uncollected','online','unpaid'),
+(1006,3,'2025-10-02','13:30','Collected','cash','paid'),
 -- October 3
 (1007,2,'2025-10-03','09:50','Collected','online','paid'),
 (1008,3,'2025-10-03','11:15','Collected','online','paid'),
@@ -201,7 +201,7 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 (1012,3,'2025-10-04','13:05','Collected','online','paid'),
 -- October 5
 (1013,2,'2025-10-05','10:30','Collected','online','paid'),
-(1014,3,'2025-10-05','12:00','Uncollected','cash','unpaid'),
+(1014,3,'2025-10-05','12:00','Collected','cash', 'paid'),
 (1015,2,'2025-10-05','13:20','Collected','online','paid'),
 -- October 6
 (1016,3,'2025-10-06','09:50','Collected','online','paid'),
@@ -214,7 +214,7 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 -- October 8
 (1022,3,'2025-10-08','10:15','Collected','online','paid'),
 (1023,2,'2025-10-08','11:50','Collected','online','paid'),
-(1024,3,'2025-10-08','13:05','Uncollected','cash','unpaid'),
+(1024,3,'2025-10-08','13:05','Collected','cash','paid'),
 -- October 9
 (1025,2,'2025-10-09','09:10','Collected','online','paid'),
 (1026,3,'2025-10-09','11:35','Collected','online','paid'),
@@ -264,7 +264,7 @@ INSERT INTO "orders" ("order_id", "user_id", "order_date", "collection_time", "s
 (1059,2,'2025-10-20','11:50','Collected','online','paid'),
 (1060,3,'2025-10-20','13:05','Collected','online','paid'),
 -- October 21
-(1061,2,'2025-10-21','10:10','Uncollected','online','paid'),
+(1061,2,'2025-10-21','10:10','Collected','online','paid'),
 (1062,3,'2025-10-21','11:35','Collected','online','paid'),
 (1063,2,'2025-10-21','12:55','Collected','online','paid'),
 -- October 22
