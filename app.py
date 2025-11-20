@@ -1226,9 +1226,6 @@ def vendor_analytics_ABC():
                            start_date=start_date,
                            end_date=end_date)
 
-
-
-
 #End of vendor analytics ABC page
 #===============================================================
 
