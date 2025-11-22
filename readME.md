@@ -29,6 +29,7 @@ be copared to different products on the menu according to cost, products sold an
 with the frontend.
 
 # Wian du Toit
+- Edited vendor_main.html to display certain order information according to the Order Status of a selected Order ID.
 
 
 ---
