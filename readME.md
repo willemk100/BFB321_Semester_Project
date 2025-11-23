@@ -30,6 +30,7 @@ with the frontend.
 
 # Wian du Toit
 - Edited vendor_main.html to display certain order information according to the Order Status of a selected Order ID.
+- Edited vendor_analytics_trends.html to display information in the table, comparing two selected menu items, accoring to user-selected criteria.
 
 
 ---
