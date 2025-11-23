@@ -126,14 +126,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for item in [product1, product2] %}
+                                <!-- {% for item in [product1, product2] %}
                                 <tr>
                                     <td>{{ item }}</td>
                                     <td>{{ 0 }}</td>
                                     <td>{{ 0 }}</td>
                                     <td>{{ 0 }}</td>
                                 </tr>
+                                {% endfor %} -->
+
+                                {% for row in table_data %}
+                                <tr>
+                                    <td class="fw-bold">{{ row.item }}</td>
+                                    <td>{{ row.summary['Units Sold'] }}</td>
+                                    <td>{{ row.summary['Total Profit'] }}</td>
+                                    <td>{{ row.summary['Total Cost'] }}</td>
+                                </tr>
                                 {% endfor %}
+                                
                             </tbody>
                         </table>
                     </div>
