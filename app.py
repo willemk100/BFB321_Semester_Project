@@ -6,7 +6,9 @@ from flask import Flask, render_template, request, redirect, url_for, g, session
 import sqlite3
 import io, base64
 import os
-from datetime import datetime, timedelta, date, time # For date manipulations
+from datetime import datetime, timedelta, date, time 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # -----------------------------
