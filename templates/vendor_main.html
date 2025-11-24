@@ -197,37 +197,6 @@
 
         <hr class="my-3">
 
-        <!-- Orders table -->
-        <!-- <div class="table-responsive">
-            <table id="orderTrackingTable" class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Order Tracking Number</th>
-                        <th>Collection Time</th>
-                        <th>Order</th>
-                        <th>Order Cost (ZAR)</th>
-                        <th>Order Fee</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for order in orders %}
-                    <tr>
-                        <td>{{ order.tracking_id }}</td>
-                        <td>{{ order.collection_time }}</td>
-                        <td>{{ order.order_products }}</td>
-                        <td>R{{ "%.2f"|format(order.cost) }}</td>
-
-                        {% set fee_status = order.fee_status %}
-                        {% set status_class = 'text-success' if fee_status == 'Paid' else 'text-danger' %}
-
-                        <td class="{{ status_class }} fw-bold">{{ fee_status }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>  -->
-
         {% if selected_order and selected_order.status != 'Collected' %}
         <!-- INLINE POP-UP for selected order -->
         <section class="mt-4">
