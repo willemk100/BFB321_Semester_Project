@@ -1,9 +1,9 @@
 # BFB 321 Semester Project - Group 14
 
 ## Group Members
-Ayden de Villiers – u04867999 
-Ricus Bouwer – u23525135 
-Wian du Toit – u23592410 
+Ayden de Villiers – u04867999 - u04867999
+Ricus Bouwer – u23525135 - Ricus2025
+Wian du Toit – u23592410 - wiandutoit
 Willem Kleynhans – u04868260 - willemk100
 
 ---
