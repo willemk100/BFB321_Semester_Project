@@ -17,7 +17,11 @@ Willem Kleynhans – u04868260 - willemk100
 - Completed the entire login flow, new cuctomer page, all the admin_xxx.html pages that includes adding new vendors. 
 
 # Ayden de Villiers
-
+- Created commented segments for each part of the app.py logic.
+- Adjusted the database schema to include order payment method and status, as well as adding some sample data.
+- Completed the logic for the vendor edit menu section (adding new items, deleting items, and editing existing items)
+- Completed the logic for the vendor Analytics main page.
+- Completed the logic for the customer segement (adding orders to cart, editing your cart, paying and confirming of orders, and showing live order tracking)
 
 # Ricus Bouwer
 - Created vendor_main.html and imported the data from ordering.sql to be displayed in a table showing its statuses.
