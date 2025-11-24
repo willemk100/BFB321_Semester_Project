@@ -1372,12 +1372,8 @@ def get_menu_items(conn, vendor_id):
         (vendor_id,)
     ).fetchall()
     
-    # Format: "menuItem_id|Category (Item Name)" 
     return [f"{row[0]}|{row[1]} ({row[2]})" for row in items]
 
-
-# vendor analytics forecasting page (vendor_analytics_forecasting.html)
-# ===============================================================
 @app.route('/vendor_analytics_forecasting', methods=['GET'])
 def vendor_analytics_forecasting():
     if session.get('user_type') != 'vendor':
@@ -1387,7 +1383,6 @@ def vendor_analytics_forecasting():
     conn = get_db_connection()
     
     # --- 1. Filter and Item Selection ---
-    
     # Read filter_type from URL (defaults to 'weekly')
     filter_type = request.args.get('filter_type', 'weekly') 
     
@@ -1414,7 +1409,6 @@ def vendor_analytics_forecasting():
     # --- 2. ANALYSIS BLOCK ---
     if target_item_id:
         
-        # Define a consistent reference date for backward calculation (ensures consistency for testing)
         reference_date = datetime(2025, 11, 3).date()
         
         # --- Define Historical Periods ---
@@ -1448,7 +1442,6 @@ def vendor_analytics_forecasting():
         total_periods = len(historical_periods)
         
         # --- 3. Calculate Historical Data (Per Period) ---
-        
         # Define the total date range for Busiest Time calculation across all periods
         total_start_date = historical_periods[-1]['start']
         total_end_date = historical_periods[0]['end']
