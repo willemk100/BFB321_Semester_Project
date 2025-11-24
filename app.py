@@ -1381,135 +1381,148 @@ def vendor_analytics_forecasting():
     if session.get('user_type') != 'vendor':
         return redirect(url_for('login'))
 
-    # Ensure request, redirect, url_for, session are imported from flask
     vendor_id = session['vendor_id']
     conn = get_db_connection()
     
-    # --- Item Selection Logic ---
-    # 1. Get all individual menu items as formatted strings
-    menu_items = get_menu_items(conn, vendor_id) 
+    # --- 1. Filter and Item Selection ---
     
-    # Initialize safety variables before the main analysis block
+    # Read filter_type from URL (defaults to 'weekly')
+    filter_type = request.args.get('filter_type', 'weekly') 
+    
+    menu_items = get_menu_items(conn, vendor_id) 
     target_item_id = None
     selected_item_string = None
-    historical_data = [] # Initialize empty list for historical data
+    historical_data = [] 
     
-    # Default values for predictions (in case no item is selected/available)
     predicted_demand = 0
     busiest_time = 'N/A'
     predicted_daily_demand = 0.0
     target_item_name = 'No Item Selected'
 
-    # If there are items, determine the selected item
     if menu_items:
-        # 2. Get the selected item string from the URL
         selected_item_string = request.args.get('product1') 
-        
-        # Set a default item string if none is selected
         if not selected_item_string:
             selected_item_string = menu_items[0] 
             
-        # Parse the selected string to get the ID and the display name
         parts = selected_item_string.split('|', 1) 
         target_item_id = parts[0]       
         target_item_name = parts[1]     
     
     
-    # --- ANALYSIS BLOCK (Runs ONLY if a valid item ID exists) ---
+    # --- 2. ANALYSIS BLOCK (Runs ONLY if a valid item ID exists) ---
     if target_item_id:
         
-        # --- 1. Define Historical Periods ---
-        weekly_periods = [
-            {'id': 1, 'start': '2025-10-27', 'end': '2025-11-02'},
-            {'id': 2, 'start': '2025-10-20', 'end': '2025-10-26'},
-            {'id': 3, 'start': '2025-10-13', 'end': '2025-10-19'},
-        ]
+        # Define a consistent reference date for backward calculation (ensures consistency for testing)
+        reference_date = datetime(2025, 11, 3).date()
         
-        # --- 2. Calculate Historical Data (Per Week) ---
-        for period in weekly_periods:
+        # --- Define Historical Periods (DYNAMIC based on filter_type) ---
+        if filter_type == 'monthly':
+            # Monthly View: Look at the 3 preceding 30-day blocks
+            periods = []
+            
+            # Start 1 day before the reference date
+            end_date = reference_date - timedelta(days=1)
+            
+            for i in range(1, 4):
+                period_id = i 
+                start_date = end_date - timedelta(days=30)
+                periods.append({
+                    'id': period_id, 
+                    'start': start_date.strftime('%Y-%m-%d'), 
+                    'end': end_date.strftime('%Y-%m-%d'),
+                    'total_days': 30
+                })
+                end_date = start_date - timedelta(days=1)
+                
+            historical_periods = periods
+            period_label = "Past Months" 
+            
+        else: # Default or 'weekly'
+            # Weekly View: Look at the 3 preceding full weeks (Hardcoded dates)
+            historical_periods = [
+                {'id': '1', 'start': '2025-10-27', 'end': '2025-11-02', 'total_days': 7},
+                {'id': '2', 'start': '2025-10-20', 'end': '2025-10-26', 'total_days': 7},
+                {'id': '3', 'start': '2025-10-13', 'end': '2025-10-19', 'total_days': 7},
+            ]
+            period_label = "Past Weeks" 
+            
+        total_periods = len(historical_periods)
+        
+        # --- 3. Calculate Historical Data (Per Period) ---
+        
+        # Define the total date range for Busiest Time calculation across all periods
+        total_start_date = historical_periods[-1]['start']
+        total_end_date = historical_periods[0]['end']
+        total_historic_days = sum(p['total_days'] for p in historical_periods)
+        
+        for period in historical_periods:
             start_date = period['start']
             end_date = period['end']
-            week_data = {'id': period['id'], 'units_sold': 0, 'peak_time': 'N/A', 'avg_daily_peak': 0}
+            total_days = period['total_days'] 
+            period_data = {'id': period['id'], 'units_sold': 0, 'peak_time': 'N/A', 'avg_daily_peak': 0} 
             
             # SQL to get Units Sold
             units_sql = """
-                SELECT COUNT(T1.orderItem_id)
-                FROM orderItem AS T1
+                SELECT COUNT(T1.orderItem_id) FROM orderItem AS T1 
                 INNER JOIN orders AS T2 ON T1.orders_order_id = T2.order_id
                 INNER JOIN menuItem AS T3 ON T1.menuItem_menuItem_id = T3.menuItem_id
-                WHERE T3.menuItem_id = ? AND T3.vendor_id = ?
-                  AND T2.order_date BETWEEN ? AND ?;
+                WHERE T3.menuItem_id = ? AND T3.vendor_id = ? AND T2.order_date BETWEEN ? AND ?;
             """
             units_sold = conn.execute(units_sql, (target_item_id, vendor_id, start_date, end_date)).fetchone()[0]
-            week_data['units_sold'] = units_sold
+            period_data['units_sold'] = units_sold
             
             if units_sold > 0:
                 # SQL to get Most Frequent Pickup Time (Peak Time)
                 peak_time_sql = """
-                    SELECT T2.collection_time 
-                    FROM orderItem AS T1
+                    SELECT T2.collection_time FROM orderItem AS T1
                     INNER JOIN orders AS T2 ON T1.orders_order_id = T2.order_id
                     INNER JOIN menuItem AS T3 ON T1.menuItem_menuItem_id = T3.menuItem_id
-                    WHERE T3.menuItem_id = ? AND T3.vendor_id = ?
-                      AND T2.order_date BETWEEN ? AND ?
-                    GROUP BY T2.collection_time
-                    ORDER BY COUNT(T2.collection_time) DESC
-                    LIMIT 1;
+                    WHERE T3.menuItem_id = ? AND T3.vendor_id = ? AND T2.order_date BETWEEN ? AND ?
+                    GROUP BY T2.collection_time ORDER BY COUNT(T2.collection_time) DESC LIMIT 1;
                 """
-                peak_time = conn.execute(peak_time_sql, (target_item_id, vendor_id, start_date, end_date)).fetchone()[0]
-                week_data['peak_time'] = peak_time
+                peak_time_result = conn.execute(peak_time_sql, (target_item_id, vendor_id, start_date, end_date)).fetchone()
+                peak_time = peak_time_result[0] if peak_time_result else 'N/A'
+                period_data['peak_time'] = peak_time
 
-                # SQL to get orders during the peak time within this week 
+                # SQL to get orders during the peak time within this period
                 peak_orders_sql = """
-                    SELECT COUNT(order_id)
-                    FROM orders
-                    WHERE order_date BETWEEN ? AND ?
-                      AND collection_time = ?;
+                    SELECT COUNT(order_id) FROM orders
+                    WHERE order_date BETWEEN ? AND ? AND collection_time = ?;
                 """
                 orders_at_peak = conn.execute(peak_orders_sql, (start_date, end_date, peak_time)).fetchone()[0]
                 
                 # Calculate Average Daily Orders During Peak
-                week_data['avg_daily_peak'] = round(orders_at_peak / 7.0, 2)
+                period_data['avg_daily_peak'] = round(orders_at_peak / total_days, 2)
             
-            historical_data.append(week_data)
+            historical_data.append(period_data)
 
-        # --- 3. Calculate Forecasting Metrics ---
+        # --- 4. Calculate Forecasting Metrics ---
+        total_units_sold = sum(p['units_sold'] for p in historical_data)
         
-        # 3a. Predicted Weekly Demand
-        total_units_sold_3w = sum(w['units_sold'] for w in historical_data)
-        # Handle division by zero edge case safely
-        if len(weekly_periods) > 0:
-            predicted_demand = round(total_units_sold_3w / len(weekly_periods), 0)
-        # else: predicted_demand remains 0 (set in initialization)
-
-        # 3b. Busiest Time (Most frequent peak time across all 3 weeks)
+        # 4a. Predicted Demand (Average units sold per period)
+        if total_periods > 0:
+            predicted_demand = round(total_units_sold / total_periods, 0) 
+        
+        # 4b. Busiest Time (Most frequent peak time across all periods)
         busiest_time_sql = """
-            SELECT T2.collection_time 
-            FROM orderItem AS T1
+            SELECT T2.collection_time FROM orderItem AS T1
             INNER JOIN orders AS T2 ON T1.orders_order_id = T2.order_id
             INNER JOIN menuItem AS T3 ON T1.menuItem_menuItem_id = T3.menuItem_id
             WHERE T3.menuItem_id = ? AND T3.vendor_id = ?
-              AND T2.order_date BETWEEN '2025-10-13' AND '2025-11-02'
-            GROUP BY T2.collection_time
-            ORDER BY COUNT(T2.collection_time) DESC
-            LIMIT 1;
+              AND T2.order_date BETWEEN ? AND ?
+            GROUP BY T2.collection_time ORDER BY COUNT(T2.collection_time) DESC LIMIT 1;
         """
-        busiest_time_result = conn.execute(busiest_time_sql, (target_item_id, vendor_id)).fetchone()
+        busiest_time_result = conn.execute(busiest_time_sql, (target_item_id, vendor_id, total_start_date, total_end_date)).fetchone()
         busiest_time = busiest_time_result[0] if busiest_time_result else 'N/A'
 
-        # 3c. Predicted Daily Demand During Peak Time (Safely handled if busiest_time is 'N/A')
-        total_days = 21 
-        
-        if busiest_time != 'N/A':
+        # 4c. Predicted Daily Demand During Peak Time
+        if busiest_time != 'N/A' and total_historic_days > 0:
             daily_peak_orders_sql = """
-                SELECT COUNT(order_id)
-                FROM orders
-                WHERE order_date BETWEEN '2025-10-13' AND '2025-11-02'
-                  AND collection_time = ?;
+                SELECT COUNT(order_id) FROM orders
+                WHERE order_date BETWEEN ? AND ? AND collection_time = ?;
             """
-            total_orders_at_peak = conn.execute(daily_peak_orders_sql, (busiest_time,)).fetchone()[0]
-            predicted_daily_demand = round(total_orders_at_peak / total_days, 2)
-        # else: predicted_daily_demand remains 0.0 (set in initialization)
+            total_orders_at_peak = conn.execute(daily_peak_orders_sql, (total_start_date, total_end_date, busiest_time)).fetchone()[0]
+            predicted_daily_demand = round(total_orders_at_peak / total_historic_days, 2)
     
     # --- End Analysis Block ---
     
@@ -1521,6 +1534,8 @@ def vendor_analytics_forecasting():
         target_item_name=target_item_name,  
         menu_items=menu_items,              
         selected_item_string=selected_item_string, 
+        filter_type=filter_type, 
+        period_label=period_label if 'period_label' in locals() else 'Past Periods', 
         predicted_demand=int(predicted_demand), 
         busiest_time=busiest_time,
         predicted_daily_demand=predicted_daily_demand
