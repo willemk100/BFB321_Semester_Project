@@ -1021,7 +1021,7 @@ def vendor_analytics():
 
     # --- Most Popular Item ---
     popular_item_row = conn.execute("""
-        SELECT mi.name, COUNT(*) AS sold_count
+        SELECT mi.name, mi.category, COUNT(*) AS sold_count
         FROM orderItem oi
         JOIN menuItem mi ON oi.menuItem_menuItem_id = mi.menuItem_id
         JOIN orders o ON oi.orders_order_id = o.order_id
@@ -1032,19 +1032,24 @@ def vendor_analytics():
         ORDER BY sold_count DESC
         LIMIT 1
     """, (vendor_id, start_date_str, end_date_str)).fetchone()
-    popular_item = popular_item_row['name'] if popular_item_row else "N/A"
+    if popular_item_row:
+        popular_item = f"{popular_item_row['name']}  {popular_item_row['category']}"
+    else:
+        popular_item = "N/A"
 
     # --- Sales History ---
     sales_history = conn.execute("""
-        SELECT o.order_id, GROUP_CONCAT(mi.name, ', ') AS items,
-               SUM(oi.price_per_item) AS total_price,
-               o.order_date, o.collection_time
-        FROM orders o
-        JOIN orderItem oi ON o.order_id = oi.orders_order_id
-        JOIN menuItem mi ON oi.menuItem_menuItem_id = mi.menuItem_id
-        WHERE oi.vendor_id = ?
-        GROUP BY o.order_id
-        ORDER BY o.order_date DESC, o.collection_time DESC
+    SELECT o.order_id, 
+           GROUP_CONCAT(mi.name || ' (' || mi.category || ')', ', ') AS items,
+           SUM(oi.price_per_item) AS total_price,
+           o.order_date, 
+           o.collection_time
+    FROM orders o
+    JOIN orderItem oi ON o.order_id = oi.orders_order_id
+    JOIN menuItem mi ON oi.menuItem_menuItem_id = mi.menuItem_id
+    WHERE oi.vendor_id = ?
+    GROUP BY o.order_id
+    ORDER BY o.order_date DESC, o.collection_time DESC
     """, (vendor_id,)).fetchall()
 
     conn.close()
