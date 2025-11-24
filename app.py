@@ -1360,14 +1360,14 @@ def vendor_analytics_trends():
 
 #vendor analytics forecasting page (vendor_analytics_forecasting.html)
 #===============================================================
-def get_menu_categories(conn, vendor_id):
-    """Fetches a list of unique menu item categories for the vendor."""
-    categories = conn.execute(
-        'SELECT DISTINCT category FROM menuItem WHERE vendor_id = ? ORDER BY category',
+def get_menu_items(conn, vendor_id):
+    """Fetches a list of all individual menu items (ID, category, name) for the vendor."""
+    items = conn.execute(
+        'SELECT menuItem_id, category, name FROM menuItem WHERE vendor_id = ? ORDER BY category, name',
         (vendor_id,)
     ).fetchall()
-   
-    return [row[0] for row in categories]
+    
+    return [{'menuItem_id': row[0], 'category': row[1], 'name': row[2]} for row in items]
 
 @app.route('/vendor_analytics_forecasting', methods=['GET'])
 def vendor_analytics_forecasting():
