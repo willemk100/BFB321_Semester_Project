@@ -1103,7 +1103,7 @@ def vendor_analytics_ABC():
         elif month_filter == 'november':
             start_date = db_max_date.replace(day=1)
             end_date = db_max_date
-        elif month_filter == 'all':  # All (Oct + Nov)
+        elif month_filter == 'all':  #
             start_date = prev_month
             end_date = db_max_date
         else:
@@ -1360,6 +1360,15 @@ def vendor_analytics_trends():
 
 #vendor analytics forecasting page (vendor_analytics_forecasting.html)
 #===============================================================
+def get_menu_categories(conn, vendor_id):
+    """Fetches a list of unique menu item categories for the vendor."""
+    categories = conn.execute(
+        'SELECT DISTINCT category FROM menuItem WHERE vendor_id = ? ORDER BY category',
+        (vendor_id,)
+    ).fetchall()
+   
+    return [row[0] for row in categories]
+
 @app.route('/vendor_analytics_forecasting', methods=['GET'])
 def vendor_analytics_forecasting():
     if session.get('user_type') != 'vendor':
@@ -1367,10 +1376,123 @@ def vendor_analytics_forecasting():
 
     vendor_id = session['vendor_id']
     conn = get_db_connection()
-      # Your code for forecasting analysis would go here
+    
+    # 1. Get all unique categories for the dropdown
+    menu_categories = get_menu_categories(conn, vendor_id)
+    
+    # 2. Get the selected category from the URL parameters (product1 is the select field name)
+    selected_category = request.args.get('product1') 
+    
+    # Set a default category if none is selected (use the first one found)
+    if not selected_category and menu_categories:
+        selected_category = menu_categories[0]
+        
+    # Set the target_category for analysis
+    target_category = selected_category
+
+    # --- 1. Define Historical Periods ---
+    target_category = 'Burger'
+    
+    # Define the date ranges for the 3 preceding full weeks (Sun to Sat)
+    weekly_periods = [
+        {'id': 1, 'start': '2025-10-27', 'end': '2025-11-02'},
+        {'id': 2, 'start': '2025-10-20', 'end': '2025-10-26'},
+        {'id': 3, 'start': '2025-10-13', 'end': '2025-10-19'},
+    ]
+    
+    historical_data = []
+
+    # --- 2. Calculate Historical Data (Per Week) ---
+    for period in weekly_periods:
+        start_date = period['start']
+        end_date = period['end']
+        week_data = {'id': period['id'], 'units_sold': 0, 'peak_time': 'N/A', 'avg_daily_peak': 0}
+        # SQL to get Units Sold
+        units_sql = """
+            SELECT COUNT(T1.orderItem_id)
+            FROM orderItem AS T1
+            INNER JOIN orders AS T2 ON T1.orders_order_id = T2.order_id
+            INNER JOIN menuItem AS T3 ON T1.menuItem_menuItem_id = T3.menuItem_id
+            WHERE T3.category = ? AND T3.vendor_id = ?
+              AND T2.order_date BETWEEN ? AND ?;
+        """
+        units_sold = conn.execute(units_sql, (target_category, vendor_id, start_date, end_date)).fetchone()[0]
+        week_data['units_sold'] = units_sold
+        
+        if units_sold > 0:
+            # SQL to get Most Frequent Pickup Time (Peak Time)
+            peak_time_sql = """
+                SELECT T2.collection_time 
+                FROM orderItem AS T1
+                INNER JOIN orders AS T2 ON T1.orders_order_id = T2.order_id
+                INNER JOIN menuItem AS T3 ON T1.menuItem_menuItem_id = T3.menuItem_id
+                WHERE T3.category = ? AND T3.vendor_id = ?
+                  AND T2.order_date BETWEEN ? AND ?
+                GROUP BY T2.collection_time
+                ORDER BY COUNT(T2.collection_time) DESC
+                LIMIT 1;
+            """
+            peak_time = conn.execute(peak_time_sql, (target_category, vendor_id, start_date, end_date)).fetchone()[0]
+            week_data['peak_time'] = peak_time
+
+            # SQL to get orders during the peak time within this week
+            peak_orders_sql = """
+                SELECT COUNT(order_id)
+                FROM orders
+                WHERE order_date BETWEEN ? AND ?
+                  AND collection_time = ?;
+            """
+            orders_at_peak = conn.execute(peak_orders_sql, (start_date, end_date, peak_time)).fetchone()[0]
+            
+            # Calculate Average Daily Orders During Peak (Orders_at_peak / 7 days)
+            week_data['avg_daily_peak'] = round(orders_at_peak / 7.0, 2)
+        
+        historical_data.append(week_data)
+
+    # --- 3. Calculate Forecasting Metrics ---
+    
+    # 3a. Predicted Weekly Demand (Average Weekly Units Sold)
+    total_units_sold_3w = sum(w['units_sold'] for w in historical_data)
+    predicted_demand = round(total_units_sold_3w / len(weekly_periods), 0) # Round to nearest whole number
+
+    # 3b. Busiest Time (Most frequent peak time across all 3 weeks)
+    busiest_time_sql = """
+        SELECT T2.collection_time 
+        FROM orderItem AS T1
+        INNER JOIN orders AS T2 ON T1.orders_order_id = T2.order_id
+        INNER JOIN menuItem AS T3 ON T1.menuItem_menuItem_id = T3.menuItem_id
+        WHERE T3.category = ? AND T3.vendor_id = ?
+          AND T2.order_date BETWEEN '2025-10-13' AND '2025-11-02'
+        GROUP BY T2.collection_time
+        ORDER BY COUNT(T2.collection_time) DESC
+        LIMIT 1;
+    """
+    busiest_time_result = conn.execute(busiest_time_sql, (target_category, vendor_id)).fetchone()
+    busiest_time = busiest_time_result[0] if busiest_time_result else 'N/A'
+
+    # 3c. Predicted Daily Demand During Peak Time (Total orders at busiest time / 21 days)
+    total_days = 21 # 3 weeks * 7 days
+    
+    daily_peak_orders_sql = """
+        SELECT COUNT(order_id)
+        FROM orders
+        WHERE order_date BETWEEN '2025-10-13' AND '2025-11-02'
+          AND collection_time = ?;
+    """
+    total_orders_at_peak = conn.execute(daily_peak_orders_sql, (busiest_time,)).fetchone()[0]
+    predicted_daily_demand = round(total_orders_at_peak / total_days, 2)
+
     conn.close() 
 
-    return render_template('vendor_analytics_forecasting.html')
+    return render_template('vendor_analytics_forecasting.html', 
+        historical_data=historical_data,
+        target_category=target_category,
+        menu_items=menu_categories,          
+        selected_item=selected_category,     
+        predicted_demand=int(predicted_demand), 
+        busiest_time=busiest_time,
+        predicted_daily_demand=predicted_daily_demand
+    )
 
 #End of vendor analytics forecasting page
 #===============================================================
