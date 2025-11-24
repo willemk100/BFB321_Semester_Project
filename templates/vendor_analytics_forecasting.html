@@ -95,16 +95,22 @@
                         <form method="GET" action="{{ url_for('vendor_analytics_forecasting') }}" class="d-flex align-items-center">
                             
                             <label for="product1" class="me-2">Select Item:</label>
+                            
                             <select name="product1" id="product1" class="form-select me-4" onchange="this.form.submit()">
                                 {% for item in menu_items %}
-                                    <option value="{{ item }}" {% if item==selected_item %}selected{% endif %}>
-                                        {{ item }}
+                                    <option 
+                                        value="{{ item.menuItem_id }}" 
+                                        {% if item.menuItem_id | string == selected_item_id %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ item.category }} - {{ item.name }} 
                                     </option>
                                 {% endfor %}
                             </select>
                             
                         </form>
-
+                        
                     </div>
 
                     <div class="card shadow-sm mb-4">
