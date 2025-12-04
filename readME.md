@@ -50,12 +50,12 @@ pip install -r requirements.txt
 ```
 
  
-3. Then run the following in the bash terminal: 
+2. Then run the following in the bash terminal: 
 
 ```bash
 python app.py
 ```
-4. Scroll down in the bash terminal.
+3. Scroll down in the bash terminal.
     Then hold ctrl and click on the link: **http://127.0.0.1:5000**
 
     The development server is active and will open the web application in a web browser.
